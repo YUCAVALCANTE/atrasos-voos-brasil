@@ -41,7 +41,7 @@
   .vx-table .vx-cellbar { display: flex; align-items: center; gap: var(--cds-gap-xs); justify-content: flex-end; }
   .vx-table .vx-cellbar i { display: inline-block; height: 6px; border-radius: 3px; background: currentColor; opacity: .55; }
   .vx-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-  .vx-legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--sw); }
+  .vx-legend > span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--sw); }
   .vx-section { display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
   .vx-sectitle { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
   details.vx-notes { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
@@ -315,7 +315,7 @@
     const generico = valor === PADRAO[filtro];
     el.textContent = minusculo && generico ? o.rotulo.charAt(0).toLowerCase() + o.rotulo.slice(1) : o.rotulo;
   };
-  dash.draw('periodo', (el) => rotuloFiltro(el, 'ano', vx.sel().ano, false));
+  dash.draw('periodo', (el) => rotuloFiltro(el, 'ano', vx.sel().ano, true));
   dash.draw('nome-empresa', (el) => rotuloFiltro(el, 'empresa', vx.sel().empresa, true));
   dash.draw('nome-aeroporto', (el) => rotuloFiltro(el, 'aeroporto', vx.sel().aeroporto, true));
 

@@ -152,7 +152,7 @@ def rotular(df: pd.DataFrame) -> pd.DataFrame:
 def arredondar(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     for c in df.select_dtypes("float").columns:
-        df[c] = df[c].round(4 if c.startswith("taxa") or c in ("roc_auc", "pr_auc", "brier") else 1)
+        df[c] = df[c].round(1 if c.endswith("_min") else 4)
     return df
 
 
