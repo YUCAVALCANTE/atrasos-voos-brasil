@@ -161,7 +161,13 @@ def salvar(nome: str, df: pd.DataFrame) -> None:
     caminho = SAIDA / f"{nome}.json"
     df = arredondar(df)
     caminho.write_text(
-        json.dumps(df.to_dict(orient="records"), ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
+        json.dumps(
+            df.astype(object).where(df.notna(), None).to_dict(orient="records"),
+            ensure_ascii=False,
+            separators=(",", ":"),
+            allow_nan=False,
+        ),
+        encoding="utf-8",
     )
     print(f"{nome}: {len(df):,} linhas, {caminho.stat().st_size / 1e3:.0f} KB")
 

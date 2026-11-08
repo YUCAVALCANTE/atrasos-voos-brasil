@@ -192,9 +192,9 @@
 
 <script>
   // Definição de atraso usada pela ANAC e pelo modelo (referência fixa).
-  const LIMIAR_MIN = 15;
-  const LIMIAR_LONGO_MIN = 60;
-  const PADRAO = { empresa: 'Todas', aeroporto: 'Todos', ano: 'Todos' };
+  window.LIMIAR_MIN = 15;
+  window.LIMIAR_LONGO_MIN = 60;
+  window.PADRAO = { empresa: 'Todas', aeroporto: 'Todos', ano: 'Todos' };
 
   d3.formatDefaultLocale({ decimal: ',', thousands: '.', grouping: [3], currency: ['R$ ', ''] });
   const ptMeses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
