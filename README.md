@@ -22,7 +22,7 @@ Avaliação no **período de teste (jul–set/2026)**, que o modelo nunca viu du
 
 Taxa base de atraso no teste: 17,9%.
 
-📊 **[Dashboard interativo](https://yucavalcante.github.io/voos/)**: explore atrasos por empresa, aeroporto e período, com o desempenho do modelo.
+📊 **[Dashboard interativo](https://yucavalcante.com/voos/)**: explore atrasos por empresa, aeroporto e período, com o desempenho do modelo.
 
 **Principais conclusões**
 
