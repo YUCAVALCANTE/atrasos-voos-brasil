@@ -1,0 +1,592 @@
+<meta name="dash-one-writer">
+<style>
+  .vx { display: flex; flex-direction: column; gap: var(--cds-gap-lg); font-family: var(--font-anthropic-sans); max-width: 1280px; margin-inline: auto; }
+  .vx-head { display: flex; flex-direction: column; gap: var(--cds-gap-xs); }
+  .vx-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+  .vx-lede { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 72ch; line-height: 1.5; }
+  .vx-lede b { color: var(--color-fg); font-weight: 600; }
+  .vx-bar { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; justify-content: space-between; }
+  .vx-tabs { display: flex; gap: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); }
+  .vx-tab { appearance: none; background: none; border: 0; border-bottom: 2px solid transparent; padding: var(--cds-pad-sm) var(--cds-pad-md); font: inherit; color: var(--color-fg-muted); cursor: pointer; margin-bottom: -1px; }
+  .vx-tab[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--color-fg); font-weight: 500; }
+  .vx-tab:focus-visible, .vx-btn:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .vx-filters { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+  .vx-filters .dash-select { min-width: 0; max-width: 100%; }
+  .vx-btn { appearance: none; font: inherit; font-size: var(--cds-font-size-caption); background: none; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); color: var(--color-fg-muted); cursor: pointer; }
+  .vx-btn:hover { color: var(--color-fg); }
+  .vx-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: var(--cds-gap-md); }
+  .vx-tile { display: flex; flex-direction: column; gap: var(--cds-gap-xs); padding: var(--cds-pad-md) var(--cds-pad-lg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); min-width: 0; }
+  .vx-tile-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .vx-tile-value { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .vx-tile-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .vx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
+  .vx-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
+  .vx-card.vx-wide { grid-column: 1 / -1; }
+  .vx-card h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; text-wrap: balance; }
+  .vx-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.45; }
+  .vx-chart { position: relative; min-height: 240px; }
+  .vx-chart.vx-tall { min-height: 300px; }
+  .vx-chart svg { display: block; overflow: visible; }
+  .vx-chart text { fill: var(--color-fg-muted); font-size: var(--cds-font-size-caption); font-family: var(--font-anthropic-sans); }
+  .vx-chart .vx-strong { fill: var(--color-fg); }
+  .vx-click { cursor: pointer; }
+  .vx-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
+  .vx-tip .vx-tip-h { color: var(--cds-text-secondary); margin-bottom: 2px; }
+  .vx-tip .vx-sw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
+  .vx-tablebox { max-height: 26rem; overflow: auto; }
+  .vx-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .vx-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: 500; color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
+  .vx-table td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
+  .vx-table .vx-num { text-align: right; }
+  .vx-table .vx-cellbar { display: flex; align-items: center; gap: var(--cds-gap-xs); justify-content: flex-end; }
+  .vx-table .vx-cellbar i { display: inline-block; height: 6px; border-radius: 3px; background: currentColor; opacity: .55; }
+  .vx-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .vx-legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--sw); }
+  .vx-section { display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
+  .vx-sectitle { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  details.vx-notes { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
+  details.vx-notes summary { cursor: pointer; color: var(--color-fg); }
+  details.vx-notes dl { display: grid; grid-template-columns: minmax(0, 12rem) minmax(0, 1fr); gap: var(--cds-gap-xs) var(--cds-gap-md); margin: var(--cds-gap-sm) 0 0; }
+  details.vx-notes dt { color: var(--color-fg); }
+  details.vx-notes dd { margin: 0; }
+  [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+  [data-dash-source-state=empty] { color: transparent; }
+  @media (max-width: 560px) { details.vx-notes dl { grid-template-columns: 1fr; } }
+</style>
+
+<div class="vx">
+  <header class="vx-head" id="topo">
+    <h1 class="vx-title">Atrasos de voos no Brasil</h1>
+    <p class="vx-lede">Em <b data-draw="periodo" data-source="filtros" data-field="rotulo">—</b>, <b data-draw="kpi" data-source="indicadores" data-field="taxa_atraso" data-fmt="pct">—</b> dos voos de <b data-draw="nome-empresa" data-source="filtros" data-field="rotulo">—</b> com partida em <b data-draw="nome-aeroporto" data-source="filtros" data-field="rotulo">—</b> chegaram com mais de <span data-draw="limiar">—</span> min de atraso, contra <b data-draw="kpi" data-scope="brasil" data-source="indicadores" data-field="taxa_atraso" data-fmt="pct">—</b> na média das empresas brasileiras. Microdados de voos regulares da ANAC.</p>
+  </header>
+
+  <div class="vx-bar">
+    <div class="vx-tabs" role="tablist" aria-label="Seções">
+      <button class="vx-tab" role="tab" id="aba-panorama" aria-controls="panorama" aria-selected="true" data-aba="panorama">Panorama dos atrasos</button>
+      <button class="vx-tab" role="tab" id="aba-modelo" aria-controls="modelo" aria-selected="false" data-aba="modelo">Modelo de previsão</button>
+    </div>
+    <div class="vx-filters" id="filtros">
+      <select class="dash-select" id="f-empresa" aria-label="Empresa" data-draw="filtro" data-filtro="empresa" data-source="filtros"></select>
+      <select class="dash-select" id="f-aeroporto" aria-label="Aeroporto de origem" data-draw="filtro" data-filtro="aeroporto" data-source="filtros"></select>
+      <select class="dash-select" id="f-ano" aria-label="Período" data-draw="filtro" data-filtro="ano" data-source="filtros"></select>
+      <button class="vx-btn" id="f-limpar" type="button">Limpar filtros</button>
+    </div>
+  </div>
+
+  <section class="vx-section" id="panorama" role="tabpanel" aria-labelledby="aba-panorama">
+    <div class="vx-tiles" id="indicadores">
+      <div class="vx-tile">
+        <span class="vx-tile-label">Taxa de atraso (chegada &gt; <span data-draw="limiar">—</span> min)</span>
+        <span class="vx-tile-value" data-draw="kpi" data-source="indicadores" data-field="taxa_atraso" data-fmt="pct">—</span>
+        <span class="vx-tile-note">Média brasileira: <span data-draw="kpi" data-scope="brasil" data-source="indicadores" data-field="taxa_atraso" data-fmt="pct">—</span></span>
+      </div>
+      <div class="vx-tile">
+        <span class="vx-tile-label">Atrasos acima de <span data-draw="limiar60">—</span> min</span>
+        <span class="vx-tile-value" data-draw="kpi" data-source="indicadores" data-field="taxa_atraso_60" data-fmt="pct">—</span>
+        <span class="vx-tile-note">Média brasileira: <span data-draw="kpi" data-scope="brasil" data-source="indicadores" data-field="taxa_atraso_60" data-fmt="pct">—</span></span>
+      </div>
+      <div class="vx-tile">
+        <span class="vx-tile-label">Atraso médio de quem atrasou</span>
+        <span class="vx-tile-value"><span data-draw="kpi" data-source="indicadores" data-field="atraso_medio_min" data-fmt="min">—</span> min</span>
+        <span class="vx-tile-note">Média brasileira: <span data-draw="kpi" data-scope="brasil" data-source="indicadores" data-field="atraso_medio_min" data-fmt="min">—</span> min</span>
+      </div>
+      <div class="vx-tile">
+        <span class="vx-tile-label">Cancelamentos</span>
+        <span class="vx-tile-value" data-draw="kpi" data-source="indicadores" data-field="taxa_cancelamento" data-fmt="pct">—</span>
+        <span class="vx-tile-note">Média brasileira: <span data-draw="kpi" data-scope="brasil" data-source="indicadores" data-field="taxa_cancelamento" data-fmt="pct">—</span></span>
+      </div>
+      <div class="vx-tile">
+        <span class="vx-tile-label">Voos programados</span>
+        <span class="vx-tile-value" data-draw="kpi" data-source="indicadores" data-field="voos_programados" data-fmt="compacto">—</span>
+        <span class="vx-tile-note"><span data-draw="kpi" data-source="indicadores" data-field="voos_realizados" data-fmt="int">—</span> realizados</span>
+      </div>
+    </div>
+
+    <div class="vx-grid">
+      <article class="vx-card vx-wide" id="serie-mensal">
+        <h2>Atraso e cancelamento mês a mês</h2>
+        <p class="vx-note">Sempre jan/2024 a set/2026 para a empresa e o aeroporto escolhidos; o ano selecionado fica destacado.</p>
+        <div class="vx-legend"><span style="--sw: var(--vx-c0)">Atraso &gt; <span data-draw="limiar">—</span> min</span><span style="--sw: var(--vx-c1)">Cancelamento</span></div>
+        <div class="vx-chart vx-tall" data-draw="mensal" data-source="mensal"></div>
+      </article>
+
+      <article class="vx-card" id="por-hora">
+        <h2>O atraso se acumula ao longo do dia</h2>
+        <p class="vx-note">Taxa de atraso pela hora programada de partida.</p>
+        <div class="vx-chart" data-draw="hora" data-source="por_hora"></div>
+      </article>
+
+      <article class="vx-card" id="por-dia">
+        <h2>Atraso por dia da semana</h2>
+        <p class="vx-note">Taxa de atraso pelo dia programado de partida.</p>
+        <div class="vx-chart" data-draw="dia" data-source="por_dia_semana"></div>
+      </article>
+
+      <article class="vx-card" id="ranking-empresas">
+        <h2>Comparação entre empresas</h2>
+        <p class="vx-note">No aeroporto e período escolhidos. Clique numa barra para filtrar; a linha marca a média de todas.</p>
+        <div class="vx-chart" data-draw="empresas" data-source="indicadores"></div>
+      </article>
+
+      <article class="vx-card" id="ranking-aeroportos">
+        <h2>Aeroportos de origem com mais atraso</h2>
+        <p class="vx-note">Os 20 aeroportos de maior movimento, para a empresa e o período escolhidos. Clique para filtrar.</p>
+        <div class="vx-chart vx-tall" data-draw="aeroportos" data-source="indicadores"></div>
+      </article>
+
+      <article class="vx-card vx-wide" id="rotas">
+        <h2>Rotas movimentadas que mais atrasam</h2>
+        <p class="vx-note">Entre as 40 rotas com mais voos na seleção (mínimo de 200 voos), as 12 com maior taxa de atraso.</p>
+        <div class="vx-tablebox">
+          <table class="vx-table" data-source="rotas" data-row-key="chave">
+            <thead><tr><th data-field="rota">Rota</th><th data-field="destino_nome">Destino</th><th class="vx-num" data-field="voos_realizados">Voos</th><th class="vx-num" data-field="taxa_atraso">Taxa de atraso</th><th class="vx-num" data-field="atraso_medio_min">Atraso médio de quem atrasou (min)</th></tr></thead>
+            <tbody data-draw="rotas" data-source="rotas"></tbody>
+          </table>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="vx-section" id="modelo" role="tabpanel" aria-labelledby="aba-modelo" hidden>
+    <p class="vx-lede">Um modelo LightGBM estima a chance de cada voo atrasar. Ele foi treinado com voos de abr/2024 a jun/2026 e testado em jul a set/2026, meses que nunca viu. Os filtros acima não se aplicam a esta aba.</p>
+    <div class="vx-grid">
+      <article class="vx-card vx-wide" id="metricas-modelos">
+        <h2>Desempenho no período de teste</h2>
+        <p class="vx-note">ROC-AUC: 0,5 é sorteio e 1 é perfeito. Precisão no top 10%: entre os 10% de voos que o modelo aponta como mais arriscados, quantos de fato atrasaram. Lift: quantas vezes isso supera a taxa média.</p>
+        <div class="vx-tablebox">
+          <table class="vx-table" data-source="modelo_metricas" data-row-key="modelo">
+            <thead><tr><th data-field="modelo">Modelo</th><th class="vx-num" data-field="roc_auc">ROC-AUC</th><th class="vx-num" data-field="pr_auc">PR-AUC</th><th class="vx-num" data-field="precisao_top10">Precisão no top 10%</th><th class="vx-num" data-field="lift_top10">Lift no top 10%</th><th class="vx-num" data-field="brier">Brier (menor é melhor)</th></tr></thead>
+            <tbody data-draw="metricas" data-source="modelo_metricas"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="vx-card" id="decis">
+        <h2>O risco previsto separa bem os voos</h2>
+        <p class="vx-note">Voos do teste ordenados em 10 faixas pelo risco previsto. As barras mostram quantos de fato atrasaram em cada faixa.</p>
+        <div class="vx-legend"><span style="--sw: var(--vx-c0)">Planejamento (véspera)</span><span style="--sw: var(--vx-c2)">Operacional (2h antes)</span></div>
+        <div class="vx-chart vx-tall" data-draw="decis" data-source="modelo_decis"></div>
+      </article>
+
+      <article class="vx-card" id="importancia">
+        <h2>O que mais pesa na previsão</h2>
+        <p class="vx-note">Participação de cada atributo no ganho do modelo operacional (12 maiores).</p>
+        <div class="vx-legend"><span style="--sw: var(--vx-c2)">Operação em tempo real</span><span style="--sw: var(--vx-c0)">Histórico</span><span style="--sw: var(--vx-muted)">Malha e calendário</span></div>
+        <div class="vx-chart vx-tall" data-draw="importancia" data-source="modelo_importancia"></div>
+      </article>
+    </div>
+  </section>
+
+  <details class="vx-notes" id="notas">
+    <summary>Definições, fonte e o que ficou de fora</summary>
+    <dl>
+      <dt>Fonte</dt><dd>Microdados VRA (Voo Regular Ativo) da ANAC, jan/2024 a set/2026, baixados do portal de dados abertos. Cálculos próprios, com código aberto no repositório do projeto.</dd>
+      <dt>Atraso</dt><dd>Chegada real mais de <span data-draw="limiar">—</span> minutos depois da chegada prevista. Calculado só sobre voos realizados.</dd>
+      <dt>Atraso médio de quem atrasou</dt><dd>Média dos minutos de atraso na chegada, considerando apenas os voos que atrasaram.</dd>
+      <dt>Cancelamento</dt><dd>Voos programados com situação "cancelado" sobre todos os programados.</dd>
+      <dt>Aeroporto</dt><dd>Aeroporto de origem do voo. Os 20 de maior movimento aparecem pelo nome; os demais estão em "Outros aeroportos".</dd>
+      <dt>Fica de fora</dt><dd>Empresas estrangeiras, empresas brasileiras de pequeno porte e registros com horários impossíveis (atraso menor que −2 h ou maior que 24 h).</dd>
+    </dl>
+  </details>
+</div>
+
+<script>
+  // Definição de atraso usada pela ANAC e pelo modelo (referência fixa).
+  const LIMIAR_MIN = 15;
+  const LIMIAR_LONGO_MIN = 60;
+  const PADRAO = { empresa: 'Todas', aeroporto: 'Todos', ano: 'Todos' };
+
+  d3.formatDefaultLocale({ decimal: ',', thousands: '.', grouping: [3], currency: ['R$ ', ''] });
+  const ptMeses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+
+  const vx = (window.vx = {});
+  vx.sel = () => ({ ...PADRAO, ...Object.fromEntries(Object.entries(dash.params()).filter(([, v]) => v != null && v !== '')) });
+  vx.enc = (v) => encodeURIComponent(String(v));
+  vx.where = (o) => Object.entries(o).map(([k, v]) => vx.enc(k) + '=' + vx.enc(v)).join('&');
+  vx.rows = (id) => { const d = dash.data(id); return d.status === 'ok' ? d.data : null; };
+  vx.match = (r, o) => Object.entries(o).every(([k, v]) => String(r[k]) === String(v));
+  vx.fmt = {
+    pct: (v) => (v == null ? '—' : d3.format('.1%')(+v)),
+    min: (v) => (v == null ? '—' : d3.format('.0f')(+v)),
+    int: (v) => (v == null ? '—' : d3.format(',')(+v)),
+    compacto: (v) => (v == null ? '—' : new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumFractionDigits: 1 }).format(+v)),
+    dec3: (v) => (v == null ? '—' : d3.format('.3f')(+v)),
+    dec2: (v) => (v == null ? '—' : d3.format('.2f')(+v) + '×'),
+  };
+  vx.mesLabel = (d) => ptMeses[d.getUTCMonth()] + '/' + String(d.getUTCFullYear()).slice(2);
+  vx.colors = () => {
+    const c = dash.colors;
+    const pick = (i) => (Array.isArray(c) ? c[i] : (c && (c.light || c)[i])) || ['#2a78d6', '#eb6834', '#1baf7a'][i];
+    return [pick(0), pick(1), pick(2)];
+  };
+  vx.muted = () => getComputedStyle(document.documentElement).getPropertyValue('--cds-chart-muted').trim() || '#9a9a96';
+
+  // Tooltip dentro do gráfico
+  vx.tip = (box) => {
+    let t = box.querySelector(':scope > .vx-tip');
+    if (!t) { t = document.createElement('div'); t.className = 'vx-tip'; t.hidden = true; box.appendChild(t); }
+    return {
+      show(ev, header, lines) {
+        t.replaceChildren();
+        const h = document.createElement('div'); h.className = 'vx-tip-h'; h.textContent = header; t.appendChild(h);
+        for (const [color, label, value] of lines) {
+          const l = document.createElement('div');
+          if (color) { const s = document.createElement('span'); s.className = 'vx-sw'; s.style.background = color; l.appendChild(s); }
+          l.appendChild(document.createTextNode(label ? label + ': ' + value : value));
+          t.appendChild(l);
+        }
+        t.hidden = false;
+        const r = box.getBoundingClientRect();
+        let x = ev.clientX - r.left + 12, y = ev.clientY - r.top + 12;
+        const w = t.offsetWidth, hgt = t.offsetHeight;
+        if (x + w > r.width) x = Math.max(0, ev.clientX - r.left - w - 12);
+        if (y + hgt > r.height) y = Math.max(0, ev.clientY - r.top - hgt - 12);
+        t.style.left = x + 'px'; t.style.top = y + 'px';
+      },
+      hide() { t.hidden = true; },
+    };
+  };
+
+  vx.svg = (el, h) => {
+    el.querySelectorAll(':scope > svg, :scope > .vx-empty').forEach((n) => n.remove());
+    const w = Math.max(280, el.clientWidth || 600);
+    const svg = d3.select(el).insert('svg', ':first-child').attr('width', '100%').attr('viewBox', `0 0 ${w} ${h}`).attr('height', h);
+    return { svg, w, h };
+  };
+  vx.vazio = (el, texto) => {
+    el.querySelectorAll(':scope > svg, :scope > .vx-empty').forEach((n) => n.remove());
+    if (!texto) return;
+    const p = document.createElement('p'); p.className = 'vx-note vx-empty'; p.textContent = texto; el.appendChild(p);
+  };
+  vx.measure = (svg, texts) => {
+    const g = svg.append('g').attr('opacity', 0);
+    let m = 0;
+    for (const s of texts) { const t = g.append('text').text(s); m = Math.max(m, t.node().getComputedTextLength()); }
+    g.remove();
+    return m;
+  };
+  vx.gridY = (g, y, w, left, fmt, ticks) => {
+    const ax = g.append('g').attr('transform', `translate(${left},0)`).call(d3.axisLeft(y).ticks(ticks).tickFormat(fmt).tickSize(-(w - left)).tickPadding(6));
+    ax.attr('font-size', null).attr('font-family', null);
+    ax.select('.domain').remove();
+    ax.selectAll('line').attr('stroke', 'var(--cds-chart-grid)');
+  };
+
+  // Cores como variáveis de CSS para as legendas
+  dash.onData(() => {
+    const [c0, c1, c2] = vx.colors();
+    document.querySelectorAll('.vx').forEach((root) => {
+      root.style.setProperty('--vx-c0', c0); root.style.setProperty('--vx-c1', c1); root.style.setProperty('--vx-c2', c2);
+      root.style.setProperty('--vx-muted', vx.muted());
+    });
+  });
+
+  // Abas
+  const abrir = (nome, link) => {
+    document.querySelectorAll('.vx-tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.aba === nome)));
+    document.querySelectorAll('.vx-section').forEach((s) => { s.hidden = s.id !== nome; });
+    document.querySelectorAll('#filtros').forEach((f) => { f.style.visibility = nome === 'modelo' ? 'hidden' : 'visible'; });
+    if (link) dash.setLink(nome);
+  };
+  document.querySelectorAll('.vx-tab').forEach((b) => b.addEventListener('click', () => abrir(b.dataset.aba, true)));
+  if (['panorama', 'modelo'].includes(location.hash.slice(1))) abrir(location.hash.slice(1), false);
+
+  document.querySelectorAll('#f-limpar').forEach((b) => b.addEventListener('click', () => dash.setParams({ ...PADRAO })));
+</script>
+
+<script>
+  dash.draw('limiar', (el) => { el.textContent = String(LIMIAR_MIN); });
+  dash.draw('limiar60', (el) => { el.textContent = String(LIMIAR_LONGO_MIN); });
+
+  dash.draw('filtro', (s) => {
+    const r = vx.rows('filtros');
+    const nome = s.dataset.filtro;
+    const opts = r ? r.filter((x) => x.filtro === nome) : [];
+    s.replaceChildren(...opts.map((o) => new Option(o.rotulo, o.valor)));
+    s.value = vx.sel()[nome];
+    s.onchange = () => dash.setParams({ [nome]: s.value });
+  });
+
+  const rotuloFiltro = (el, filtro, valor, minusculo) => {
+    const r = vx.rows('filtros');
+    const o = r && r.find((x) => x.filtro === filtro && String(x.valor) === String(valor));
+    if (!o) { el.textContent = '—'; el.removeAttribute('data-where'); return; }
+    el.dataset.where = vx.where({ filtro, valor });
+    const generico = valor === PADRAO[filtro];
+    el.textContent = minusculo && generico ? o.rotulo.charAt(0).toLowerCase() + o.rotulo.slice(1) : o.rotulo;
+  };
+  dash.draw('periodo', (el) => rotuloFiltro(el, 'ano', vx.sel().ano, false));
+  dash.draw('nome-empresa', (el) => rotuloFiltro(el, 'empresa', vx.sel().empresa, true));
+  dash.draw('nome-aeroporto', (el) => rotuloFiltro(el, 'aeroporto', vx.sel().aeroporto, true));
+
+  dash.draw('kpi', (el) => {
+    const r = vx.rows('indicadores');
+    const s = vx.sel();
+    const escopo = el.dataset.scope === 'brasil' ? { empresa: 'Todas', aeroporto: 'Todos', ano: s.ano } : s;
+    const row = r && r.find((x) => vx.match(x, escopo));
+    if (!row || row[el.dataset.field] == null) { el.textContent = '—'; el.removeAttribute('data-where'); return; }
+    el.dataset.where = vx.where(escopo);
+    el.textContent = vx.fmt[el.dataset.fmt](row[el.dataset.field]);
+  });
+</script>
+
+<script>
+  // Série mensal: duas taxas no mesmo eixo de porcentagem
+  dash.draw('mensal', (el) => {
+    const r = vx.rows('mensal');
+    const s = vx.sel();
+    const dados = (r || []).filter((x) => x.empresa === s.empresa && x.aeroporto === s.aeroporto)
+      .map((x) => ({ ...x, data: new Date(x.mes + '-01T00:00:00Z') })).sort((a, b) => a.data - b.data);
+    if (!r) return vx.vazio(el, '');
+    if (!dados.length) return vx.vazio(el, 'Sem voos desta empresa neste aeroporto.');
+    vx.vazio(el, '');
+    const [c0, c1] = vx.colors();
+    const { svg, w, h } = vx.svg(el, 300);
+    const series = [
+      { campo: 'taxa_atraso', nome: 'Atraso', cor: c0 },
+      { campo: 'taxa_cancelamento', nome: 'Cancelamento', cor: c1 },
+    ];
+    const ymax = d3.max(dados, (d) => Math.max(d.taxa_atraso ?? 0, d.taxa_cancelamento ?? 0)) || 0.1;
+    const y0 = d3.scaleLinear([0, ymax * 1.1], [h - 28, 10]).nice();
+    const fmtY = d3.format('.0%');
+    const left = vx.measure(svg, y0.ticks(5).map(fmtY)) + 10;
+    const endW = vx.measure(svg, ['Cancelamento 00,0%']) + 8;
+    const x = d3.scaleUtc(d3.extent(dados, (d) => d.data), [left, w - endW]);
+    const g = svg.append('g');
+    if (s.ano !== 'Todos') {
+      const a = new Date(`${s.ano}-01-01T00:00:00Z`), b = new Date(`${+s.ano + 1}-01-01T00:00:00Z`);
+      const xa = Math.max(left, x(a)), xb = Math.min(w - endW, x(d3.utcMonth.offset(b, -1)) + 6);
+      g.append('rect').attr('x', xa - 6).attr('y', 6).attr('width', Math.max(0, xb - xa + 6)).attr('height', h - 34)
+        .attr('fill', 'var(--cds-chart-reference)').attr('opacity', 0.12).attr('rx', 4);
+    }
+    vx.gridY(g, y0, w - endW, left, fmtY, 5);
+    const xa = g.append('g').attr('transform', `translate(0,${h - 28})`)
+      .call(d3.axisBottom(x).ticks(Math.max(3, Math.floor((w - left - endW) / 80))).tickFormat(vx.mesLabel).tickSizeOuter(0).tickPadding(8));
+    xa.attr('font-size', null).attr('font-family', null);
+    xa.select('.domain').attr('stroke', 'var(--cds-chart-axis)');
+    xa.selectAll('.tick line').remove();
+    const ends = [];
+    for (const sr of series) {
+      const pts = dados.filter((d) => d[sr.campo] != null);
+      g.append('path').datum(pts).attr('fill', 'none').attr('stroke', sr.cor).attr('stroke-width', 2)
+        .attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round')
+        .attr('d', d3.line().x((d) => x(d.data)).y((d) => y0(d[sr.campo])));
+      const last = pts[pts.length - 1];
+      if (last) ends.push({ sr, y: y0(last[sr.campo]), v: last[sr.campo], x: x(last.data) });
+    }
+    ends.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 14) ends[i].y = ends[i - 1].y + 14;
+    for (const e of ends) {
+      g.append('circle').attr('cx', e.x).attr('cy', y0(e.v)).attr('r', 3.5).attr('fill', e.sr.cor);
+      g.append('text').attr('x', e.x + 8).attr('y', e.y).attr('dy', '0.35em').attr('class', 'vx-strong').text(`${e.sr.nome} ${vx.fmt.pct(e.v)}`);
+    }
+    const tip = vx.tip(el);
+    const foco = g.append('line').attr('y1', 10).attr('y2', h - 28).attr('stroke', 'var(--cds-chart-reference)').attr('opacity', 0);
+    const dots = series.map((sr) => g.append('circle').attr('r', 4).attr('fill', sr.cor).attr('opacity', 0));
+    const bis = d3.bisector((d) => d.data).center;
+    svg.append('rect').attr('x', left).attr('y', 0).attr('width', w - left - endW).attr('height', h).attr('fill', 'transparent')
+      .on('pointermove', (ev) => {
+        const [mx] = d3.pointer(ev);
+        const d = dados[bis(dados, x.invert(mx))];
+        if (!d) return;
+        foco.attr('x1', x(d.data)).attr('x2', x(d.data)).attr('opacity', 1);
+        series.forEach((sr, i) => dots[i].attr('cx', x(d.data)).attr('cy', y0(d[sr.campo] ?? 0)).attr('opacity', d[sr.campo] == null ? 0 : 1));
+        tip.show(ev, vx.mesLabel(d.data), [
+          [sr0(), 'Atraso', vx.fmt.pct(d.taxa_atraso)],
+          [sr1(), 'Cancelamento', vx.fmt.pct(d.taxa_cancelamento)],
+          [null, '', vx.fmt.int(d.voos_realizados) + ' voos realizados'],
+        ]);
+        function sr0() { return c0; } function sr1() { return c1; }
+      })
+      .on('pointerleave', () => { tip.hide(); foco.attr('opacity', 0); dots.forEach((d) => d.attr('opacity', 0)); });
+  });
+
+  // Barras verticais (hora / dia da semana)
+  const barras = (el, dados, chave, rotulo, cabecalho) => {
+    const c0 = vx.colors()[0];
+    const { svg, w, h } = vx.svg(el, 240);
+    const fmtY = d3.format('.0%');
+    const y = d3.scaleLinear([0, (d3.max(dados, (d) => d.taxa_atraso) || 0.1) * 1.12], [h - 26, 8]).nice();
+    const left = vx.measure(svg, y.ticks(4).map(fmtY)) + 10;
+    const x = d3.scaleBand(dados.map((d) => d[chave]), [left, w]).padding(0.25);
+    const g = svg.append('g');
+    vx.gridY(g, y, w, left, fmtY, 4);
+    const passo = Math.ceil(dados.length / Math.max(1, Math.floor((w - left) / 34)));
+    const xa = g.append('g').attr('transform', `translate(0,${h - 26})`)
+      .call(d3.axisBottom(x).tickValues(x.domain().filter((_, i) => i % passo === 0)).tickFormat(rotulo).tickSize(0).tickPadding(8));
+    xa.attr('font-size', null).attr('font-family', null);
+    xa.select('.domain').attr('stroke', 'var(--cds-chart-axis)');
+    const tip = vx.tip(el);
+    const bw = Math.min(32, x.bandwidth());
+    g.append('g').selectAll('rect').data(dados).join('rect')
+      .attr('x', (d) => x(d[chave]) + (x.bandwidth() - bw) / 2).attr('width', bw)
+      .attr('y', (d) => y(d.taxa_atraso)).attr('height', (d) => Math.max(0, y(0) - y(d.taxa_atraso)))
+      .attr('rx', Math.min(3, bw / 2)).attr('fill', c0)
+      .on('pointermove', function (ev, d) {
+        d3.select(this).attr('opacity', 0.8);
+        tip.show(ev, cabecalho(d), [[null, 'Atraso', vx.fmt.pct(d.taxa_atraso)], [null, 'Voos', vx.fmt.int(d.voos_realizados)]]);
+      })
+      .on('pointerleave', function () { d3.select(this).attr('opacity', 1); tip.hide(); });
+  };
+
+  dash.draw('hora', (el) => {
+    const r = vx.rows('por_hora'); const s = vx.sel();
+    if (!r) return vx.vazio(el, '');
+    const dados = r.filter((x) => vx.match(x, s) && x.voos_realizados >= 30).sort((a, b) => a.hora - b.hora);
+    if (!dados.length) return vx.vazio(el, 'Sem voos suficientes nesta seleção.');
+    vx.vazio(el, '');
+    barras(el, dados, 'hora', (h) => String(h).padStart(2, '0') + 'h', (d) => `Partida às ${String(d.hora).padStart(2, '0')}h`);
+  });
+
+  dash.draw('dia', (el) => {
+    const r = vx.rows('por_dia_semana'); const s = vx.sel();
+    if (!r) return vx.vazio(el, '');
+    const dados = r.filter((x) => vx.match(x, s)).sort((a, b) => a.ordem - b.ordem);
+    if (!dados.length) return vx.vazio(el, 'Sem voos nesta seleção.');
+    vx.vazio(el, '');
+    barras(el, dados, 'dia_semana', (d) => d, (d) => d.dia_semana);
+  });
+
+  // Barras horizontais clicáveis (empresas / aeroportos)
+  const ranking = (el, dados, rotulo, campoFiltro, selecionado, referencia) => {
+    const [c0] = vx.colors();
+    const muted = vx.muted();
+    const linha = 26;
+    const { svg, w, h } = vx.svg(el, dados.length * linha + 26);
+    const left = vx.measure(svg, dados.map(rotulo)) + 12;
+    const valW = vx.measure(svg, ['00,0%']) + 10;
+    const x = d3.scaleLinear([0, (d3.max(dados, (d) => d.taxa_atraso) || 0.1) * 1.05], [left, w - valW]);
+    const y = d3.scaleBand(dados.map(rotulo), [4, h - 22]).padding(0.28);
+    const g = svg.append('g');
+    const tip = vx.tip(el);
+    const algum = selecionado && dados.some((d) => d[campoFiltro] === selecionado);
+    const sel = g.append('g').selectAll('g').data(dados).join('g').attr('class', 'vx-click')
+      .attr('transform', (d) => `translate(0,${y(rotulo(d))})`)
+      .on('click', (_, d) => dash.setParams({ [campoFiltro]: d[campoFiltro] === selecionado ? PADRAO[campoFiltro] : d[campoFiltro] }))
+      .on('pointermove', (ev, d) => tip.show(ev, rotulo(d), [[null, 'Atraso', vx.fmt.pct(d.taxa_atraso)], [null, 'Cancelamento', vx.fmt.pct(d.taxa_cancelamento)], [null, 'Voos realizados', vx.fmt.int(d.voos_realizados)]]))
+      .on('pointerleave', () => tip.hide());
+    sel.append('rect').attr('x', 0).attr('width', w).attr('height', y.bandwidth()).attr('fill', 'transparent');
+    sel.append('text').attr('x', left - 8).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').attr('text-anchor', 'end')
+      .attr('class', (d) => (d[campoFiltro] === selecionado ? 'vx-strong' : null)).text(rotulo);
+    sel.append('rect').attr('x', left).attr('height', y.bandwidth()).attr('width', (d) => Math.max(0, x(d.taxa_atraso) - left))
+      .attr('rx', 3).attr('fill', (d) => (!algum || d[campoFiltro] === selecionado ? c0 : muted));
+    sel.append('text').attr('x', (d) => x(d.taxa_atraso) + 6).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').text((d) => vx.fmt.pct(d.taxa_atraso));
+    if (referencia != null) {
+      g.append('line').attr('x1', x(referencia)).attr('x2', x(referencia)).attr('y1', 0).attr('y2', h - 20)
+        .attr('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '4 3');
+      g.append('text').attr('x', x(referencia)).attr('y', h - 6).attr('text-anchor', 'middle').text('média ' + vx.fmt.pct(referencia));
+    }
+  };
+
+  dash.draw('empresas', (el) => {
+    const r = vx.rows('indicadores'); const s = vx.sel();
+    if (!r) return vx.vazio(el, '');
+    const dados = r.filter((x) => x.aeroporto === s.aeroporto && x.ano === s.ano && x.empresa !== 'Todas' && x.voos_realizados >= 100)
+      .sort((a, b) => b.taxa_atraso - a.taxa_atraso);
+    if (!dados.length) return vx.vazio(el, 'Sem voos nesta seleção.');
+    vx.vazio(el, '');
+    const ref = r.find((x) => x.aeroporto === s.aeroporto && x.ano === s.ano && x.empresa === 'Todas');
+    ranking(el, dados, (d) => d.empresa_nome, 'empresa', s.empresa === 'Todas' ? null : s.empresa, ref && ref.taxa_atraso);
+  });
+
+  dash.draw('aeroportos', (el) => {
+    const r = vx.rows('indicadores'); const s = vx.sel();
+    if (!r) return vx.vazio(el, '');
+    const dados = r.filter((x) => x.empresa === s.empresa && x.ano === s.ano && !['Todos', 'Outros'].includes(x.aeroporto) && x.voos_realizados >= 100)
+      .sort((a, b) => b.taxa_atraso - a.taxa_atraso);
+    if (!dados.length) return vx.vazio(el, 'Sem voos nesta seleção.');
+    vx.vazio(el, '');
+    const ref = r.find((x) => x.aeroporto === 'Todos' && x.ano === s.ano && x.empresa === s.empresa);
+    ranking(el, dados, (d) => d.aeroporto_nome, 'aeroporto', s.aeroporto === 'Todos' ? null : s.aeroporto, ref && ref.taxa_atraso);
+  });
+
+  // Tabela de rotas
+  dash.draw('rotas', (tb) => {
+    const r = vx.rows('rotas'); const s = vx.sel();
+    tb.replaceChildren();
+    if (!r) return;
+    const dados = r.filter((x) => vx.match(x, s)).sort((a, b) => b.taxa_atraso - a.taxa_atraso);
+    const max = d3.max(dados, (d) => d.taxa_atraso) || 1;
+    for (const d of dados) {
+      const tr = document.createElement('tr');
+      tr.dataset.key = d.chave;
+      const td = (txt, num) => { const c = document.createElement('td'); if (num) c.className = 'vx-num'; c.textContent = txt; tr.appendChild(c); return c; };
+      td(d.rota); td(d.destino_nome || '—'); td(vx.fmt.int(d.voos_realizados), true);
+      const c = td('', true); const wrap = document.createElement('span'); wrap.className = 'vx-cellbar';
+      const bar = document.createElement('i'); bar.style.width = Math.round((d.taxa_atraso / max) * 60) + 'px'; bar.style.color = vx.colors()[0];
+      const v = document.createElement('span'); v.textContent = vx.fmt.pct(d.taxa_atraso);
+      wrap.append(bar, v); c.appendChild(wrap);
+      td(vx.fmt.min(d.atraso_medio_min), true);
+      tb.appendChild(tr);
+    }
+    if (!dados.length) { const tr = document.createElement('tr'); const c = document.createElement('td'); c.colSpan = 5; c.textContent = 'Nenhuma rota com volume suficiente nesta seleção.'; tr.appendChild(c); tb.appendChild(tr); }
+  });
+</script>
+
+<script>
+  // Aba do modelo
+  dash.draw('metricas', (tb) => {
+    const r = vx.rows('modelo_metricas');
+    tb.replaceChildren();
+    if (!r) return;
+    const melhor = d3.max(r, (d) => d.roc_auc);
+    for (const d of [...r].sort((a, b) => a.ordem - b.ordem)) {
+      const tr = document.createElement('tr'); tr.dataset.key = d.modelo;
+      const td = (txt, num, forte) => { const c = document.createElement('td'); if (num) c.className = 'vx-num'; if (forte) c.style.fontWeight = '600'; c.textContent = txt; tr.appendChild(c); };
+      const top = d.roc_auc === melhor;
+      td(d.modelo, false, top); td(vx.fmt.dec3(d.roc_auc), true, top); td(vx.fmt.dec3(d.pr_auc), true);
+      td(vx.fmt.pct(d.precisao_top10), true, top); td(vx.fmt.dec2(d.lift_top10), true); td(vx.fmt.dec3(d.brier), true);
+      tb.appendChild(tr);
+    }
+  });
+
+  dash.draw('decis', (el) => {
+    const r = vx.rows('modelo_decis');
+    if (!r) return vx.vazio(el, '');
+    vx.vazio(el, '');
+    const [c0, , c2] = vx.colors();
+    const cor = { Planejamento: c0, Operacional: c2 };
+    const { svg, w, h } = vx.svg(el, 300);
+    const fmtY = d3.format('.0%');
+    const y = d3.scaleLinear([0, (d3.max(r, (d) => d.taxa_real) || 0.5) * 1.1], [h - 40, 8]).nice();
+    const left = vx.measure(svg, y.ticks(5).map(fmtY)) + 10;
+    const x0 = d3.scaleBand(d3.range(1, 11), [left, w]).padding(0.2);
+    const x1 = d3.scaleBand(['Planejamento', 'Operacional'], [0, x0.bandwidth()]).padding(0.1);
+    const g = svg.append('g');
+    vx.gridY(g, y, w, left, fmtY, 5);
+    const xa = g.append('g').attr('transform', `translate(0,${h - 40})`).call(d3.axisBottom(x0).tickSize(0).tickPadding(8));
+    xa.attr('font-size', null).attr('font-family', null);
+    xa.select('.domain').attr('stroke', 'var(--cds-chart-axis)');
+    g.append('text').attr('x', left).attr('y', h - 6).text('Faixa de risco previsto: 1 = menor, 10 = maior');
+    const tip = vx.tip(el);
+    g.append('g').selectAll('rect').data(r).join('rect')
+      .attr('x', (d) => x0(d.decil) + x1(d.cenario)).attr('width', x1.bandwidth())
+      .attr('y', (d) => y(d.taxa_real)).attr('height', (d) => Math.max(0, y(0) - y(d.taxa_real)))
+      .attr('rx', 2).attr('fill', (d) => cor[d.cenario])
+      .on('pointermove', (ev, d) => tip.show(ev, `Faixa ${d.decil} · ${d.cenario}`, [[cor[d.cenario], 'Atrasaram de fato', vx.fmt.pct(d.taxa_real)], [null, 'Risco médio previsto', vx.fmt.pct(d.prob_media)]]))
+      .on('pointerleave', () => tip.hide());
+  });
+
+  dash.draw('importancia', (el) => {
+    const r = vx.rows('modelo_importancia');
+    if (!r) return vx.vazio(el, '');
+    vx.vazio(el, '');
+    const [c0, , c2] = vx.colors();
+    const cor = { 'Operação em tempo real': c2, 'Histórico': c0, 'Malha e calendário': vx.muted() };
+    const dados = [...r].sort((a, b) => b.participacao - a.participacao);
+    const linha = 24;
+    const { svg, w, h } = vx.svg(el, dados.length * linha + 8);
+    const left = Math.min(w * 0.55, vx.measure(svg, dados.map((d) => d.atributo_nome)) + 12);
+    const valW = vx.measure(svg, ['00,0%']) + 10;
+    const x = d3.scaleLinear([0, d3.max(dados, (d) => d.participacao) || 1], [left, w - valW]);
+    const y = d3.scaleBand(dados.map((d) => d.atributo), [4, h - 4]).padding(0.25);
+    const g = svg.append('g');
+    const tip = vx.tip(el);
+    const row = g.selectAll('g').data(dados).join('g').attr('transform', (d) => `translate(0,${y(d.atributo)})`)
+      .on('pointermove', (ev, d) => tip.show(ev, d.atributo_nome, [[cor[d.grupo], d.grupo, vx.fmt.pct(d.participacao)]]))
+      .on('pointerleave', () => tip.hide());
+    row.append('text').attr('x', left - 8).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').attr('text-anchor', 'end').text((d) => d.atributo_nome);
+    row.append('rect').attr('x', left).attr('height', y.bandwidth()).attr('width', (d) => Math.max(0, x(d.participacao) - left)).attr('rx', 3).attr('fill', (d) => cor[d.grupo]);
+    row.append('text').attr('x', (d) => x(d.participacao) + 6).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').text((d) => vx.fmt.pct(d.participacao));
+  });
+</script>
