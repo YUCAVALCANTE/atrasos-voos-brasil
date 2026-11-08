@@ -6,27 +6,43 @@
   .vx-lede { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 72ch; line-height: 1.5; }
   .vx-lede b { color: var(--color-fg); font-weight: 600; }
   .vx-bar { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; justify-content: space-between; }
-  .vx-tabs { display: flex; gap: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); }
-  .vx-tab { appearance: none; background: none; border: 0; border-bottom: 2px solid transparent; padding: var(--cds-pad-sm) var(--cds-pad-md); font: inherit; color: var(--color-fg-muted); cursor: pointer; margin-bottom: -1px; }
-  .vx-tab { font-weight: 600; transition: color var(--cds-dur-slow) var(--cds-ease-out), border-color var(--cds-dur-slow) var(--cds-ease-out); }
-  .vx-tab[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--vx-c0, var(--color-fg)); }
+  .vx-tabs { display: inline-flex; gap: 4px; padding: 4px; border-radius: 9999px; background: color-mix(in srgb, var(--color-fg) 7%, var(--color-panel)); max-width: 100%; overflow-x: auto; }
+  .vx-tab { appearance: none; background: none; border: 0; border-radius: 9999px; padding: 7px 16px; font: inherit; font-weight: 600; color: var(--color-fg-muted); cursor: pointer; white-space: nowrap; transition: background-color var(--cds-dur-slow) var(--cds-ease-out), color var(--cds-dur-slow) var(--cds-ease-out); }
+  .vx-tab:hover { color: var(--color-fg); }
+  .vx-tab[aria-selected="true"] { background: var(--vx-c0, var(--color-fg)); color: var(--color-panel); box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--vx-c0, var(--color-fg)) 60%, transparent); }
   .vx-tab:focus-visible, .vx-btn:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
   .vx-filters { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
   .vx-filters .dash-select { min-width: 0; max-width: 100%; }
   .vx-btn { appearance: none; font: inherit; font-size: var(--cds-font-size-caption); background: none; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); color: var(--color-fg-muted); cursor: pointer; }
   .vx-btn:hover { color: var(--color-fg); }
   .vx-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: var(--cds-gap-md); }
-  .vx-tile { display: flex; flex-direction: column; gap: var(--cds-gap-xs); padding: var(--cds-pad-md) var(--cds-pad-lg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); min-width: 0; }
+  .vx-tile { --tone: var(--vx-c0); position: relative; overflow: hidden; display: flex; flex-direction: column; gap: var(--cds-gap-xs); padding: var(--cds-pad-md) var(--cds-pad-lg); background: linear-gradient(155deg, color-mix(in srgb, var(--tone) 14%, var(--color-panel)) 0%, var(--color-panel) 65%); border: 1px solid color-mix(in srgb, var(--tone) 22%, var(--color-border-line)); border-radius: var(--cds-radius); min-width: 0; }
+  .vx-tile::after { content: ""; position: absolute; right: -30px; top: -30px; width: 92px; height: 92px; border-radius: 50%; background: var(--tone); opacity: .13; pointer-events: none; }
   .vx-tile-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  .vx-tile-label::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--tone); margin-right: 7px; vertical-align: 1px; }
   .vx-tile-value { font-family: var(--font-anthropic-sans); font-weight: 700; letter-spacing: -0.02em; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; }
-  .vx-tile-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .vx-tile-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; align-self: flex-start; border-radius: 9999px; transition: color var(--cds-dur-slow); }
+  .vx-tile.vx-pior .vx-tile-note, .vx-tile.vx-melhor .vx-tile-note { font-weight: 600; padding: 1px 9px 1px 7px; }
+  .vx-tile.vx-pior .vx-tile-note { color: var(--color-bad); background: color-mix(in srgb, var(--color-bad) 12%, var(--color-panel)); }
+  .vx-tile.vx-melhor .vx-tile-note { color: var(--color-ok); background: color-mix(in srgb, var(--color-ok) 12%, var(--color-panel)); }
+  .vx-tile.vx-pior .vx-tile-note::before { content: "▲ pior que a "; }
+  .vx-tile.vx-melhor .vx-tile-note::before { content: "▼ melhor que a "; }
+  .vx-tile.vx-pior .vx-cmp-label, .vx-tile.vx-melhor .vx-cmp-label { text-transform: lowercase; }
   .vx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
   .vx-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
   .vx-card.vx-wide { grid-column: 1 / -1; }
   .vx-card h2 { font-size: var(--cds-font-size-heading); font-weight: 600; margin: 0; text-wrap: balance; }
   @media (prefers-reduced-motion: no-preference) {
     .vx-tile, .vx-card { transition: transform var(--cds-dur-slow) var(--cds-ease-out), box-shadow var(--cds-dur-slow) var(--cds-ease-out); }
-    .vx-tile:hover { transform: translateY(-3px); box-shadow: var(--cds-shadow-popover); }
+    .vx-tile:hover, .vx-card:hover { transform: translateY(-3px); box-shadow: var(--cds-shadow-popover); }
+    .vx-grow { transform-box: fill-box; transform-origin: bottom; animation: vx-sobe .6s cubic-bezier(.34, 1.56, .64, 1) both; }
+    .vx-grow-x { transform-box: fill-box; transform-origin: left; animation: vx-abre .6s cubic-bezier(.34, 1.56, .64, 1) both; }
+    .vx-trace { animation: vx-traco 1.2s cubic-bezier(.22, 1, .36, 1) both; }
+    .vx-fade { animation: vx-surge .8s ease-out .3s both; }
+    @keyframes vx-sobe { from { transform: scaleY(.03); } to { transform: scaleY(1); } }
+    @keyframes vx-abre { from { transform: scaleX(.03); } to { transform: scaleX(1); } }
+    @keyframes vx-traco { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
+    @keyframes vx-surge { from { opacity: 0; } to { opacity: 1; } }
   }
   .vx-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.45; }
   .vx-chart { position: relative; min-height: 240px; }
@@ -44,9 +60,10 @@
   .vx-table td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
   .vx-table .vx-num { text-align: right; }
   .vx-table .vx-cellbar { display: flex; align-items: center; gap: var(--cds-gap-xs); justify-content: flex-end; }
-  .vx-table .vx-cellbar i { display: inline-block; height: 6px; border-radius: 3px; background: currentColor; opacity: .55; }
+  .vx-table .vx-cellbar i { display: inline-block; height: 8px; border-radius: 9999px; background: currentColor; }
   .vx-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-  .vx-legend > span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--sw); }
+  .vx-legend > span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; background: var(--sw); }
+  .vx-legend .vx-ramp::before { width: 44px; border-radius: 9999px; background: linear-gradient(90deg, var(--vx-c0), var(--vx-c3), var(--vx-c2)); }
   .vx-section { display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
   .vx-sectitle { font-size: var(--cds-font-size-heading); font-weight: 600; margin: 0; }
   details.vx-notes { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
@@ -80,27 +97,27 @@
 
   <section class="vx-section" id="panorama" role="tabpanel" aria-labelledby="aba-panorama">
     <div class="vx-tiles" id="indicadores">
-      <div class="vx-tile">
+      <div class="vx-tile" style="--tone: var(--vx-c0)">
         <span class="vx-tile-label">Taxa de atraso (chegada &gt; <span data-draw="limiar">—</span> min)</span>
         <span class="vx-tile-value" data-draw="kpi" data-source="indicadores" data-field="taxa_atraso" data-fmt="pct">—</span>
-        <span class="vx-tile-note">Média brasileira: <span data-draw="kpi" data-scope="brasil" data-source="indicadores" data-field="taxa_atraso" data-fmt="pct">—</span></span>
+        <span class="vx-tile-note"><span class="vx-cmp-label">Média brasileira</span>: <span data-draw="kpi" data-scope="brasil" data-source="indicadores" data-field="taxa_atraso" data-fmt="pct">—</span></span>
       </div>
-      <div class="vx-tile">
+      <div class="vx-tile" style="--tone: var(--vx-c3)">
         <span class="vx-tile-label">Atrasos acima de <span data-draw="limiar60">—</span> min</span>
         <span class="vx-tile-value" data-draw="kpi" data-source="indicadores" data-field="taxa_atraso_60" data-fmt="pct">—</span>
-        <span class="vx-tile-note">Média brasileira: <span data-draw="kpi" data-scope="brasil" data-source="indicadores" data-field="taxa_atraso_60" data-fmt="pct">—</span></span>
+        <span class="vx-tile-note"><span class="vx-cmp-label">Média brasileira</span>: <span data-draw="kpi" data-scope="brasil" data-source="indicadores" data-field="taxa_atraso_60" data-fmt="pct">—</span></span>
       </div>
-      <div class="vx-tile">
+      <div class="vx-tile" style="--tone: var(--vx-c1)">
         <span class="vx-tile-label">Atraso médio de quem atrasou</span>
         <span class="vx-tile-value"><span data-draw="kpi" data-source="indicadores" data-field="atraso_medio_min" data-fmt="min">—</span> min</span>
-        <span class="vx-tile-note">Média brasileira: <span data-draw="kpi" data-scope="brasil" data-source="indicadores" data-field="atraso_medio_min" data-fmt="min">—</span> min</span>
+        <span class="vx-tile-note"><span class="vx-cmp-label">Média brasileira</span>: <span data-draw="kpi" data-scope="brasil" data-source="indicadores" data-field="atraso_medio_min" data-fmt="min">—</span> min</span>
       </div>
-      <div class="vx-tile">
+      <div class="vx-tile" style="--tone: var(--vx-c2)">
         <span class="vx-tile-label">Cancelamentos</span>
         <span class="vx-tile-value" data-draw="kpi" data-source="indicadores" data-field="taxa_cancelamento" data-fmt="pct">—</span>
-        <span class="vx-tile-note">Média brasileira: <span data-draw="kpi" data-scope="brasil" data-source="indicadores" data-field="taxa_cancelamento" data-fmt="pct">—</span></span>
+        <span class="vx-tile-note"><span class="vx-cmp-label">Média brasileira</span>: <span data-draw="kpi" data-scope="brasil" data-source="indicadores" data-field="taxa_cancelamento" data-fmt="pct">—</span></span>
       </div>
-      <div class="vx-tile">
+      <div class="vx-tile" style="--tone: var(--vx-c4)">
         <span class="vx-tile-label">Voos programados</span>
         <span class="vx-tile-value" data-draw="kpi" data-source="indicadores" data-field="voos_programados" data-fmt="compacto">—</span>
         <span class="vx-tile-note"><span data-draw="kpi" data-source="indicadores" data-field="voos_realizados" data-fmt="int">—</span> realizados</span>
@@ -111,31 +128,35 @@
       <article class="vx-card vx-wide" id="serie-mensal">
         <h2>Atraso e cancelamento mês a mês</h2>
         <p class="vx-note">Sempre jan/2024 a set/2026 para a empresa e o aeroporto escolhidos; o ano selecionado fica destacado.</p>
-        <div class="vx-legend"><span style="--sw: var(--vx-c0)">Atraso &gt; <span data-draw="limiar">—</span> min</span><span style="--sw: var(--vx-c1)">Cancelamento</span></div>
+        <div class="vx-legend"><span style="--sw: var(--vx-c0)">Atraso &gt; <span data-draw="limiar">—</span> min</span><span style="--sw: var(--vx-c2)">Cancelamento</span><span style="--sw: color-mix(in srgb, var(--vx-c1) 45%, transparent)">Ano selecionado</span></div>
         <div class="vx-chart vx-tall" data-draw="mensal" data-source="mensal"></div>
       </article>
 
       <article class="vx-card" id="por-hora">
         <h2>O atraso se acumula ao longo do dia</h2>
-        <p class="vx-note">Taxa de atraso pela hora programada de partida.</p>
+        <p class="vx-note">Taxa de atraso pela hora programada de partida. Quanto mais quente a cor, maior o atraso.</p>
+        <div class="vx-legend"><span class="vx-ramp">menos atraso → mais atraso</span></div>
         <div class="vx-chart" data-draw="hora" data-source="por_hora"></div>
       </article>
 
       <article class="vx-card" id="por-dia">
         <h2>Atraso por dia da semana</h2>
-        <p class="vx-note">Taxa de atraso pelo dia programado de partida.</p>
+        <p class="vx-note">Taxa de atraso pelo dia programado de partida. Quanto mais quente a cor, maior o atraso.</p>
+        <div class="vx-legend"><span class="vx-ramp">menos atraso → mais atraso</span></div>
         <div class="vx-chart" data-draw="dia" data-source="por_dia_semana"></div>
       </article>
 
       <article class="vx-card" id="ranking-empresas">
         <h2>Comparação entre empresas</h2>
         <p class="vx-note">No aeroporto e período escolhidos. Clique numa barra para filtrar; a linha marca a média de todas.</p>
+        <div class="vx-legend"><span style="--sw: var(--vx-c2)">Acima da média</span><span style="--sw: var(--vx-c0)">Abaixo da média</span></div>
         <div class="vx-chart" data-draw="empresas" data-source="indicadores"></div>
       </article>
 
       <article class="vx-card" id="ranking-aeroportos">
         <h2>Aeroportos de origem com mais atraso</h2>
         <p class="vx-note">Os 20 aeroportos de maior movimento, para a empresa e o período escolhidos. Clique para filtrar.</p>
+        <div class="vx-legend"><span style="--sw: var(--vx-c2)">Acima da média</span><span style="--sw: var(--vx-c0)">Abaixo da média</span></div>
         <div class="vx-chart vx-tall" data-draw="aeroportos" data-source="indicadores"></div>
       </article>
 
@@ -169,14 +190,14 @@
       <article class="vx-card" id="decis">
         <h2>O risco previsto separa bem os voos</h2>
         <p class="vx-note">Voos do teste ordenados em 10 faixas pelo risco previsto. As barras mostram quantos de fato atrasaram em cada faixa.</p>
-        <div class="vx-legend"><span style="--sw: var(--vx-c0)">Planejamento (véspera)</span><span style="--sw: var(--vx-c2)">Operacional (2h antes)</span></div>
+        <div class="vx-legend"><span style="--sw: var(--vx-c0)">Planejamento (véspera)</span><span style="--sw: var(--vx-c3)">Operacional (2h antes)</span></div>
         <div class="vx-chart vx-tall" data-draw="decis" data-source="modelo_decis"></div>
       </article>
 
       <article class="vx-card" id="importancia">
         <h2>O que mais pesa na previsão</h2>
         <p class="vx-note">Participação de cada atributo no ganho do modelo operacional (12 maiores).</p>
-        <div class="vx-legend"><span style="--sw: var(--vx-c2)">Operação em tempo real</span><span style="--sw: var(--vx-c0)">Histórico</span><span style="--sw: var(--vx-muted)">Malha e calendário</span></div>
+        <div class="vx-legend"><span style="--sw: var(--vx-c3)">Operação em tempo real</span><span style="--sw: var(--vx-c0)">Histórico</span><span style="--sw: var(--vx-c4)">Malha e calendário</span></div>
         <div class="vx-chart vx-tall" data-draw="importancia" data-source="modelo_importancia"></div>
       </article>
     </div>
@@ -221,9 +242,13 @@
   vx.mesLabel = (d) => ptMeses[d.getUTCMonth()] + '/' + String(d.getUTCFullYear()).slice(2);
   vx.colors = () => {
     const c = dash.colors;
-    const pick = (i) => (Array.isArray(c) ? c[i] : (c && (c.light || c)[i])) || ['#2a78d6', '#eb6834', '#1baf7a'][i];
-    return [pick(0), pick(1), pick(2)];
+    const pick = (i) => (Array.isArray(c) ? c[i] : (c && (c.light || c)[i])) || ['#4338ca', '#f5b70a', '#e5484d', '#a35be0', '#1f9e89'][i];
+    return [pick(0), pick(1), pick(2), pick(3), pick(4)];
   };
+  // Escala de gravidade: índigo (pouco atraso) → roxo → vermelho (muito atraso)
+  vx.ramp = () => { const [c0, , c2, c3] = vx.colors(); return d3.piecewise(d3.interpolateRgb.gamma(1.4), [c0, c3, c2]); };
+  // Anima só no primeiro desenho com dados de cada gráfico, para um filtro não repetir a entrada
+  vx.primeira = (el) => { if (el.dataset.vxVisto) return false; el.dataset.vxVisto = '1'; return true; };
   vx.muted = () => getComputedStyle(document.documentElement).getPropertyValue('--cds-chart-muted').trim() || '#9a9a96';
 
   // Tooltip dentro do gráfico
@@ -279,9 +304,10 @@
 
   // Cores como variáveis de CSS para as legendas
   dash.onData(() => {
-    const [c0, c1, c2] = vx.colors();
+    const [c0, c1, c2, c3, c4] = vx.colors();
     document.querySelectorAll('.vx').forEach((root) => {
       root.style.setProperty('--vx-c0', c0); root.style.setProperty('--vx-c1', c1); root.style.setProperty('--vx-c2', c2);
+      root.style.setProperty('--vx-c3', c3); root.style.setProperty('--vx-c4', c4);
       root.style.setProperty('--vx-muted', vx.muted());
     });
   });
@@ -332,6 +358,16 @@
     if (!row || row[el.dataset.field] == null) { el.textContent = '—'; el.removeAttribute('data-where'); return; }
     el.dataset.where = vx.where(escopo);
     el.textContent = vx.fmt[el.dataset.fmt](row[el.dataset.field]);
+    // No card de KPI: compara com a média brasileira (menos é melhor em todas estas taxas)
+    const tile = el.dataset.scope !== 'brasil' && el.closest('.vx-tile-value') && el.closest('.vx-tile');
+    if (tile && el.dataset.field !== 'voos_programados') {
+      const br = r.find((x) => vx.match(x, { empresa: 'Todas', aeroporto: 'Todos', ano: s.ano }));
+      const v = +row[el.dataset.field], ref = br ? +br[el.dataset.field] : NaN;
+      const recorte = s.empresa !== 'Todas' || s.aeroporto !== 'Todos';
+      const dif = ref ? (v - ref) / ref : 0;
+      tile.classList.toggle('vx-pior', recorte && dif > 0.03);
+      tile.classList.toggle('vx-melhor', recorte && dif < -0.03);
+    }
   });
 </script>
 
@@ -345,12 +381,16 @@
     if (!r) return vx.vazio(el, '');
     if (!dados.length) return vx.vazio(el, 'Sem voos desta empresa neste aeroporto.');
     vx.vazio(el, '');
-    const [c0, c1] = vx.colors();
+    const [c0, c1, c2] = vx.colors();
+    const anima = vx.primeira(el);
     const { svg, w, h } = vx.svg(el, 300);
     const series = [
-      { campo: 'taxa_atraso', nome: 'Atraso', cor: c0 },
-      { campo: 'taxa_cancelamento', nome: 'Cancelamento', cor: c1 },
+      { campo: 'taxa_atraso', nome: 'Atraso', cor: c0, area: true },
+      { campo: 'taxa_cancelamento', nome: 'Cancelamento', cor: c2 },
     ];
+    const gid = 'vx-grad-' + (el.closest('[id]') || { id: 'm' }).id;
+    const grad = svg.append('defs').append('linearGradient').attr('id', gid).attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', 1);
+    [[0, .32], [.35, .16], [.7, .05], [1, 0]].forEach(([o, a]) => grad.append('stop').attr('offset', o).attr('style', `stop-color:${c0};stop-opacity:${a}`));
     const ymax = d3.max(dados, (d) => Math.max(d.taxa_atraso ?? 0, d.taxa_cancelamento ?? 0)) || 0.1;
     const y0 = d3.scaleLinear([0, ymax * 1.1], [h - 28, 10]).nice();
     const fmtY = d3.format('.0%');
@@ -362,7 +402,7 @@
       const a = new Date(`${s.ano}-01-01T00:00:00Z`), b = new Date(`${+s.ano + 1}-01-01T00:00:00Z`);
       const xa = Math.max(left, x(a)), xb = Math.min(w - endW, x(d3.utcMonth.offset(b, -1)) + 6);
       g.append('rect').attr('x', xa - 6).attr('y', 6).attr('width', Math.max(0, xb - xa + 6)).attr('height', h - 34)
-        .attr('fill', 'var(--cds-chart-reference)').attr('opacity', 0.12).attr('rx', 4);
+        .attr('fill', c1).attr('opacity', 0.2).attr('rx', 10);
     }
     vx.gridY(g, y0, w - endW, left, fmtY, 5);
     const xa = g.append('g').attr('transform', `translate(0,${h - 28})`)
@@ -373,16 +413,31 @@
     const ends = [];
     for (const sr of series) {
       const pts = dados.filter((d) => d[sr.campo] != null);
-      g.append('path').datum(pts).attr('fill', 'none').attr('stroke', sr.cor).attr('stroke-width', 2)
+      if (sr.area) {
+        g.append('path').datum(pts).attr('fill', `url(#${gid})`).attr('class', anima ? 'vx-fade' : null)
+          .attr('d', d3.area().x((d) => x(d.data)).y0(y0(0)).y1((d) => y0(d[sr.campo])));
+      }
+      const linha = g.append('path').datum(pts).attr('fill', 'none').attr('stroke', sr.cor).attr('stroke-width', sr.area ? 3 : 2.5)
         .attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round')
         .attr('d', d3.line().x((d) => x(d.data)).y((d) => y0(d[sr.campo])));
+      if (anima) { const len = linha.node().getTotalLength(); linha.attr('stroke-dasharray', len).attr('class', 'vx-trace').style('--len', len); }
       const last = pts[pts.length - 1];
       if (last) ends.push({ sr, y: y0(last[sr.campo]), v: last[sr.campo], x: x(last.data) });
+    }
+    // Pico do atraso no período
+    const pico = d3.greatest(dados, (d) => d.taxa_atraso);
+    if (pico && pico.taxa_atraso != null) {
+      const px = x(pico.data), py = y0(pico.taxa_atraso);
+      g.append('circle').attr('cx', px).attr('cy', py).attr('r', 9).attr('fill', c2).attr('opacity', .18);
+      g.append('circle').attr('cx', px).attr('cy', py).attr('r', 4.5).attr('fill', c2).attr('stroke', 'var(--color-panel)').attr('stroke-width', 2);
+      const rot = g.append('text').attr('class', 'vx-strong').attr('y', Math.max(14, py - 14)).text(`Pico: ${vx.mesLabel(pico.data)} · ${vx.fmt.pct(pico.taxa_atraso)}`);
+      const tw = rot.node().getComputedTextLength();
+      rot.attr('x', Math.min(Math.max(left, px - tw / 2), w - endW - tw));
     }
     ends.sort((a, b) => a.y - b.y);
     for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 14) ends[i].y = ends[i - 1].y + 14;
     for (const e of ends) {
-      g.append('circle').attr('cx', e.x).attr('cy', y0(e.v)).attr('r', 3.5).attr('fill', e.sr.cor);
+      g.append('circle').attr('cx', e.x).attr('cy', y0(e.v)).attr('r', 4).attr('fill', e.sr.cor).attr('stroke', 'var(--color-panel)').attr('stroke-width', 2);
       g.append('text').attr('x', e.x + 8).attr('y', e.y).attr('dy', '0.35em').attr('class', 'vx-strong').text(`${e.sr.nome} ${vx.fmt.pct(e.v)}`);
     }
     const tip = vx.tip(el);
@@ -397,18 +452,20 @@
         foco.attr('x1', x(d.data)).attr('x2', x(d.data)).attr('opacity', 1);
         series.forEach((sr, i) => dots[i].attr('cx', x(d.data)).attr('cy', y0(d[sr.campo] ?? 0)).attr('opacity', d[sr.campo] == null ? 0 : 1));
         tip.show(ev, vx.mesLabel(d.data), [
-          [sr0(), 'Atraso', vx.fmt.pct(d.taxa_atraso)],
-          [sr1(), 'Cancelamento', vx.fmt.pct(d.taxa_cancelamento)],
+          [c0, 'Atraso', vx.fmt.pct(d.taxa_atraso)],
+          [c2, 'Cancelamento', vx.fmt.pct(d.taxa_cancelamento)],
           [null, '', vx.fmt.int(d.voos_realizados) + ' voos realizados'],
         ]);
-        function sr0() { return c0; } function sr1() { return c1; }
       })
       .on('pointerleave', () => { tip.hide(); foco.attr('opacity', 0); dots.forEach((d) => d.attr('opacity', 0)); });
   });
 
   // Barras verticais (hora / dia da semana)
   const barras = (el, dados, chave, rotulo, cabecalho) => {
-    const c0 = vx.colors()[0];
+    const ramp = vx.ramp();
+    const anima = vx.primeira(el);
+    const [vmin, vmax] = d3.extent(dados, (d) => d.taxa_atraso);
+    const tom = (v) => ramp(vmax > vmin ? (v - vmin) / (vmax - vmin) : 0.5);
     const { svg, w, h } = vx.svg(el, 240);
     const fmtY = d3.format('.0%');
     const y = d3.scaleLinear([0, (d3.max(dados, (d) => d.taxa_atraso) || 0.1) * 1.12], [h - 26, 8]).nice();
@@ -426,12 +483,18 @@
     g.append('g').selectAll('rect').data(dados).join('rect')
       .attr('x', (d) => x(d[chave]) + (x.bandwidth() - bw) / 2).attr('width', bw)
       .attr('y', (d) => y(d.taxa_atraso)).attr('height', (d) => Math.max(0, y(0) - y(d.taxa_atraso)))
-      .attr('rx', Math.min(6, bw / 2)).attr('fill', c0)
+      .attr('rx', Math.min(7, bw / 2)).attr('fill', (d) => tom(d.taxa_atraso))
+      .attr('class', anima ? 'vx-grow' : null).style('animation-delay', (_, i) => (anima ? i * 25 + 'ms' : null))
       .on('pointermove', function (ev, d) {
         d3.select(this).attr('opacity', 0.8);
-        tip.show(ev, cabecalho(d), [[null, 'Atraso', vx.fmt.pct(d.taxa_atraso)], [null, 'Voos', vx.fmt.int(d.voos_realizados)]]);
+        tip.show(ev, cabecalho(d), [[tom(d.taxa_atraso), 'Atraso', vx.fmt.pct(d.taxa_atraso)], [null, 'Voos', vx.fmt.int(d.voos_realizados)]]);
       })
       .on('pointerleave', function () { d3.select(this).attr('opacity', 1); tip.hide(); });
+    const topo = d3.greatest(dados, (d) => d.taxa_atraso);
+    if (topo) {
+      g.append('text').attr('class', 'vx-strong').attr('text-anchor', 'middle')
+        .attr('x', x(topo[chave]) + x.bandwidth() / 2).attr('y', y(topo.taxa_atraso) - 7).text(vx.fmt.pct(topo.taxa_atraso));
+    }
   };
 
   dash.draw('hora', (el) => {
@@ -454,8 +517,10 @@
 
   // Barras horizontais clicáveis (empresas / aeroportos)
   const ranking = (el, dados, rotulo, campoFiltro, selecionado, referencia) => {
-    const [c0] = vx.colors();
+    const [c0, , c2] = vx.colors();
     const muted = vx.muted();
+    const anima = vx.primeira(el);
+    const corDe = (d) => (referencia != null && d.taxa_atraso > referencia ? c2 : c0);
     const linha = 26;
     const { svg, w, h } = vx.svg(el, dados.length * linha + 26);
     const left = vx.measure(svg, dados.map(rotulo)) + 12;
@@ -468,13 +533,14 @@
     const sel = g.append('g').selectAll('g').data(dados).join('g').attr('class', 'vx-click')
       .attr('transform', (d) => `translate(0,${y(rotulo(d))})`)
       .on('click', (_, d) => dash.setParams({ [campoFiltro]: d[campoFiltro] === selecionado ? PADRAO[campoFiltro] : d[campoFiltro] }))
-      .on('pointermove', (ev, d) => tip.show(ev, rotulo(d), [[null, 'Atraso', vx.fmt.pct(d.taxa_atraso)], [null, 'Cancelamento', vx.fmt.pct(d.taxa_cancelamento)], [null, 'Voos realizados', vx.fmt.int(d.voos_realizados)]]))
+      .on('pointermove', (ev, d) => tip.show(ev, rotulo(d), [[corDe(d), 'Atraso', vx.fmt.pct(d.taxa_atraso)], [null, 'Cancelamento', vx.fmt.pct(d.taxa_cancelamento)], [null, 'Voos realizados', vx.fmt.int(d.voos_realizados)]]))
       .on('pointerleave', () => tip.hide());
     sel.append('rect').attr('x', 0).attr('width', w).attr('height', y.bandwidth()).attr('fill', 'transparent');
     sel.append('text').attr('x', left - 8).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').attr('text-anchor', 'end')
       .attr('class', (d) => (d[campoFiltro] === selecionado ? 'vx-strong' : null)).text(rotulo);
     sel.append('rect').attr('x', left).attr('height', y.bandwidth()).attr('width', (d) => Math.max(0, x(d.taxa_atraso) - left))
-      .attr('rx', 5).attr('fill', (d) => (!algum || d[campoFiltro] === selecionado ? c0 : muted));
+      .attr('rx', 6).attr('fill', (d) => (!algum || d[campoFiltro] === selecionado ? corDe(d) : muted))
+      .attr('class', anima ? 'vx-grow-x' : null).style('animation-delay', (_, i) => (anima ? i * 30 + 'ms' : null));
     sel.append('text').attr('x', (d) => x(d.taxa_atraso) + 6).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').text((d) => vx.fmt.pct(d.taxa_atraso));
     if (referencia != null) {
       g.append('line').attr('x1', x(referencia)).attr('x2', x(referencia)).attr('y1', 0).attr('y2', h - 20)
@@ -512,13 +578,15 @@
     if (!r) return;
     const dados = r.filter((x) => vx.match(x, s)).sort((a, b) => b.taxa_atraso - a.taxa_atraso);
     const max = d3.max(dados, (d) => d.taxa_atraso) || 1;
+    const min = d3.min(dados, (d) => d.taxa_atraso) || 0;
+    const ramp = vx.ramp();
     for (const d of dados) {
       const tr = document.createElement('tr');
       tr.dataset.key = d.chave;
       const td = (txt, num) => { const c = document.createElement('td'); if (num) c.className = 'vx-num'; c.textContent = txt; tr.appendChild(c); return c; };
       td(d.rota); td(d.destino_nome || '—'); td(vx.fmt.int(d.voos_realizados), true);
       const c = td('', true); const wrap = document.createElement('span'); wrap.className = 'vx-cellbar';
-      const bar = document.createElement('i'); bar.style.width = Math.round((d.taxa_atraso / max) * 60) + 'px'; bar.style.color = vx.colors()[0];
+      const bar = document.createElement('i'); bar.style.width = Math.round((d.taxa_atraso / max) * 60) + 'px'; bar.style.color = ramp(max > min ? (d.taxa_atraso - min) / (max - min) : 0.5);
       const v = document.createElement('span'); v.textContent = vx.fmt.pct(d.taxa_atraso);
       wrap.append(bar, v); c.appendChild(wrap);
       td(vx.fmt.min(d.atraso_medio_min), true);
@@ -549,8 +617,9 @@
     const r = vx.rows('modelo_decis');
     if (!r) return vx.vazio(el, '');
     vx.vazio(el, '');
-    const [c0, , c2] = vx.colors();
-    const cor = { Planejamento: c0, Operacional: c2 };
+    const [c0, , , c3] = vx.colors();
+    const anima = vx.primeira(el);
+    const cor = { Planejamento: c0, Operacional: c3 };
     const { svg, w, h } = vx.svg(el, 300);
     const fmtY = d3.format('.0%');
     const y = d3.scaleLinear([0, (d3.max(r, (d) => d.taxa_real) || 0.5) * 1.1], [h - 40, 8]).nice();
@@ -567,7 +636,8 @@
     g.append('g').selectAll('rect').data(r).join('rect')
       .attr('x', (d) => x0(d.decil) + x1(d.cenario)).attr('width', x1.bandwidth())
       .attr('y', (d) => y(d.taxa_real)).attr('height', (d) => Math.max(0, y(0) - y(d.taxa_real)))
-      .attr('rx', 2).attr('fill', (d) => cor[d.cenario])
+      .attr('rx', 4).attr('fill', (d) => cor[d.cenario])
+      .attr('class', anima ? 'vx-grow' : null).style('animation-delay', (d) => (anima ? d.decil * 30 + 'ms' : null))
       .on('pointermove', (ev, d) => tip.show(ev, `Faixa ${d.decil} · ${d.cenario}`, [[cor[d.cenario], 'Atrasaram de fato', vx.fmt.pct(d.taxa_real)], [null, 'Risco médio previsto', vx.fmt.pct(d.prob_media)]]))
       .on('pointerleave', () => tip.hide());
   });
@@ -576,8 +646,9 @@
     const r = vx.rows('modelo_importancia');
     if (!r) return vx.vazio(el, '');
     vx.vazio(el, '');
-    const [c0, , c2] = vx.colors();
-    const cor = { 'Operação em tempo real': c2, 'Histórico': c0, 'Malha e calendário': vx.muted() };
+    const [c0, , , c3, c4] = vx.colors();
+    const anima = vx.primeira(el);
+    const cor = { 'Operação em tempo real': c3, 'Histórico': c0, 'Malha e calendário': c4 };
     const dados = [...r].sort((a, b) => b.participacao - a.participacao);
     const linha = 24;
     const { svg, w, h } = vx.svg(el, dados.length * linha + 8);
@@ -591,7 +662,8 @@
       .on('pointermove', (ev, d) => tip.show(ev, d.atributo_nome, [[cor[d.grupo], d.grupo, vx.fmt.pct(d.participacao)]]))
       .on('pointerleave', () => tip.hide());
     row.append('text').attr('x', left - 8).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').attr('text-anchor', 'end').text((d) => d.atributo_nome);
-    row.append('rect').attr('x', left).attr('height', y.bandwidth()).attr('width', (d) => Math.max(0, x(d.participacao) - left)).attr('rx', 5).attr('fill', (d) => cor[d.grupo]);
+    row.append('rect').attr('x', left).attr('height', y.bandwidth()).attr('width', (d) => Math.max(0, x(d.participacao) - left)).attr('rx', 6).attr('fill', (d) => cor[d.grupo])
+      .attr('class', anima ? 'vx-grow-x' : null).style('animation-delay', (_, i) => (anima ? i * 30 + 'ms' : null));
     row.append('text').attr('x', (d) => x(d.participacao) + 6).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').text((d) => vx.fmt.pct(d.participacao));
   });
 </script>
