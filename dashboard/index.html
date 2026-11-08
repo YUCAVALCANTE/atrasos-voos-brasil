@@ -2,13 +2,14 @@
 <style>
   .vx { display: flex; flex-direction: column; gap: var(--cds-gap-lg); font-family: var(--font-anthropic-sans); max-width: 1280px; margin-inline: auto; }
   .vx-head { display: flex; flex-direction: column; gap: var(--cds-gap-xs); }
-  .vx-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+  .vx-title { font-family: var(--font-anthropic-serif); font-weight: 700; letter-spacing: -0.015em; line-height: 1.15; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
   .vx-lede { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 72ch; line-height: 1.5; }
   .vx-lede b { color: var(--color-fg); font-weight: 600; }
   .vx-bar { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; justify-content: space-between; }
   .vx-tabs { display: flex; gap: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); }
   .vx-tab { appearance: none; background: none; border: 0; border-bottom: 2px solid transparent; padding: var(--cds-pad-sm) var(--cds-pad-md); font: inherit; color: var(--color-fg-muted); cursor: pointer; margin-bottom: -1px; }
-  .vx-tab[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--color-fg); font-weight: 500; }
+  .vx-tab { font-weight: 600; transition: color var(--cds-dur-slow) var(--cds-ease-out), border-color var(--cds-dur-slow) var(--cds-ease-out); }
+  .vx-tab[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--vx-c0, var(--color-fg)); }
   .vx-tab:focus-visible, .vx-btn:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
   .vx-filters { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
   .vx-filters .dash-select { min-width: 0; max-width: 100%; }
@@ -16,13 +17,17 @@
   .vx-btn:hover { color: var(--color-fg); }
   .vx-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: var(--cds-gap-md); }
   .vx-tile { display: flex; flex-direction: column; gap: var(--cds-gap-xs); padding: var(--cds-pad-md) var(--cds-pad-lg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); min-width: 0; }
-  .vx-tile-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-  .vx-tile-value { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .vx-tile-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  .vx-tile-value { font-family: var(--font-anthropic-sans); font-weight: 700; letter-spacing: -0.02em; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; }
   .vx-tile-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
   .vx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
   .vx-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
   .vx-card.vx-wide { grid-column: 1 / -1; }
-  .vx-card h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; text-wrap: balance; }
+  .vx-card h2 { font-size: var(--cds-font-size-heading); font-weight: 600; margin: 0; text-wrap: balance; }
+  @media (prefers-reduced-motion: no-preference) {
+    .vx-tile, .vx-card { transition: transform var(--cds-dur-slow) var(--cds-ease-out), box-shadow var(--cds-dur-slow) var(--cds-ease-out); }
+    .vx-tile:hover { transform: translateY(-3px); box-shadow: var(--cds-shadow-popover); }
+  }
   .vx-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.45; }
   .vx-chart { position: relative; min-height: 240px; }
   .vx-chart.vx-tall { min-height: 300px; }
@@ -35,7 +40,7 @@
   .vx-tip .vx-sw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
   .vx-tablebox { max-height: 26rem; overflow: auto; }
   .vx-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
-  .vx-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: 500; color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
+  .vx-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
   .vx-table td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
   .vx-table .vx-num { text-align: right; }
   .vx-table .vx-cellbar { display: flex; align-items: center; gap: var(--cds-gap-xs); justify-content: flex-end; }
@@ -43,7 +48,7 @@
   .vx-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   .vx-legend > span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; background: var(--sw); }
   .vx-section { display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
-  .vx-sectitle { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  .vx-sectitle { font-size: var(--cds-font-size-heading); font-weight: 600; margin: 0; }
   details.vx-notes { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
   details.vx-notes summary { cursor: pointer; color: var(--color-fg); }
   details.vx-notes dl { display: grid; grid-template-columns: minmax(0, 12rem) minmax(0, 1fr); gap: var(--cds-gap-xs) var(--cds-gap-md); margin: var(--cds-gap-sm) 0 0; }
@@ -421,7 +426,7 @@
     g.append('g').selectAll('rect').data(dados).join('rect')
       .attr('x', (d) => x(d[chave]) + (x.bandwidth() - bw) / 2).attr('width', bw)
       .attr('y', (d) => y(d.taxa_atraso)).attr('height', (d) => Math.max(0, y(0) - y(d.taxa_atraso)))
-      .attr('rx', Math.min(3, bw / 2)).attr('fill', c0)
+      .attr('rx', Math.min(6, bw / 2)).attr('fill', c0)
       .on('pointermove', function (ev, d) {
         d3.select(this).attr('opacity', 0.8);
         tip.show(ev, cabecalho(d), [[null, 'Atraso', vx.fmt.pct(d.taxa_atraso)], [null, 'Voos', vx.fmt.int(d.voos_realizados)]]);
@@ -469,7 +474,7 @@
     sel.append('text').attr('x', left - 8).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').attr('text-anchor', 'end')
       .attr('class', (d) => (d[campoFiltro] === selecionado ? 'vx-strong' : null)).text(rotulo);
     sel.append('rect').attr('x', left).attr('height', y.bandwidth()).attr('width', (d) => Math.max(0, x(d.taxa_atraso) - left))
-      .attr('rx', 3).attr('fill', (d) => (!algum || d[campoFiltro] === selecionado ? c0 : muted));
+      .attr('rx', 5).attr('fill', (d) => (!algum || d[campoFiltro] === selecionado ? c0 : muted));
     sel.append('text').attr('x', (d) => x(d.taxa_atraso) + 6).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').text((d) => vx.fmt.pct(d.taxa_atraso));
     if (referencia != null) {
       g.append('line').attr('x1', x(referencia)).attr('x2', x(referencia)).attr('y1', 0).attr('y2', h - 20)
@@ -586,7 +591,7 @@
       .on('pointermove', (ev, d) => tip.show(ev, d.atributo_nome, [[cor[d.grupo], d.grupo, vx.fmt.pct(d.participacao)]]))
       .on('pointerleave', () => tip.hide());
     row.append('text').attr('x', left - 8).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').attr('text-anchor', 'end').text((d) => d.atributo_nome);
-    row.append('rect').attr('x', left).attr('height', y.bandwidth()).attr('width', (d) => Math.max(0, x(d.participacao) - left)).attr('rx', 3).attr('fill', (d) => cor[d.grupo]);
+    row.append('rect').attr('x', left).attr('height', y.bandwidth()).attr('width', (d) => Math.max(0, x(d.participacao) - left)).attr('rx', 5).attr('fill', (d) => cor[d.grupo]);
     row.append('text').attr('x', (d) => x(d.participacao) + 6).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').text((d) => vx.fmt.pct(d.participacao));
   });
 </script>
