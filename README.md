@@ -24,6 +24,8 @@ Taxa base de atraso no teste: 17,9%.
 
 📊 **[Dashboard interativo](https://yucavalcante.com/voos/)**: explore atrasos por empresa, aeroporto e período, com o desempenho do modelo.
 
+**Projeção 2027–2028:** a taxa de atraso doméstica deve ficar em torno de 15,9% em 2027 (faixa de 80%: 12,3% a 19,5%), contra 14,2% em 2025. Detalhes na [seção 5](#5-projeção-20272028).
+
 **Principais conclusões**
 
 1. **Atraso é um fenômeno que se propaga ao longo do dia.** Saber como a operação está *agora* (atraso médio da empresa e do aeroporto nas últimas 3 h) é o que mais melhora a previsão: o AUC sobe de 0,700 para 0,730 e a precisão no topo do ranking sobe de 42% para 48%.
@@ -128,14 +130,51 @@ As curvas acompanham a diagonal: em cada decil, a probabilidade média prevista 
 * **Fim de semana** (`dia_semana` alto) reduz o risco, e a **proximidade de feriados** muda o padrão de demanda.
 * No modelo operacional, o **atraso atual da rede da empresa** passa a ser o terceiro atributo mais importante.
 
-## 5. Limitações e próximos passos
+## 5. Projeção 2027–2028
+
+Além de prever o atraso de cada voo, o projeto projeta **como a taxa de atraso, o cancelamento e o volume de voos domésticos devem evoluir mês a mês até dez/2028**. A pergunta é de planejamento: que nível de atraso esperar nos próximos dois anos, e com que incerteza.
+
+<p align="center"><img src="reports/figures/projecao_atraso.png" width="95%"></p>
+
+| Série (média mensal) | 2025 observado | 2027 projetado (faixa de 80%) | 2028 projetado (faixa de 80%) | Algoritmo escolhido | Erro na validação |
+|---|---|---|---|---|---|
+| Atraso > 15 min · Brasil | 14,2% | **15,9%** (12,3% a 19,5%) | **15,9%** (11,0% a 20,7%) | SARIMA | 2,40 p.p. (30% melhor que o ingênuo) |
+| Cancelamento · Brasil | 2,0% | **2,3%** (1,2% a 3,5%) | **2,3%** (0,6% a 4,1%) | Holt-Winters amortecido | 0,83 p.p. (11% melhor que o ingênuo) |
+| Atraso · Gol | 11,5% | **15,3%** (7,7% a 22,9%) | **15,2%** (4,9% a 25,4%) | SARIMA | 5,41 p.p. (31% melhor que o ingênuo) |
+| Atraso · LATAM | 16,1% | **18,7%** (13,7% a 23,7%) | **18,0%** (10,7% a 25,3%) | SARIMA | 3,55 p.p. (17% melhor que o ingênuo) |
+| Atraso · Azul | 14,0% | **14,5%** (9,7% a 19,3%) | **14,5%** (10,0% a 18,9%) | SARIMA | 2,88 p.p. (17% melhor que o ingênuo) |
+
+Volume de voos domésticos: 68.620 voos/mês em 2025 e 69.022 projetados para 2027 (faixa de 66.056 a 71.988), pelo ingênuo sazonal, que empatou com o Theta e venceu os modelos mais sofisticados.
+
+### Uma quebra de metodologia nos dados oficiais
+
+Para projetar dois anos à frente, baixei o VRA desde 2015 (`atrasos.serie_mensal`, que resume cada mês e descarta o arquivo bruto). A série longa **não é comparável de ponta a ponta**:
+
+* até set/2015, quase todo voo aparece com atraso exatamente zero, como se o horário real fosse copiado do previsto;
+* de out/2015 a jan/2018, a taxa registrada salta para 30–47%, várias vezes acima da atual;
+* a partir de fev/2018 o padrão (nível e sazonalidade) é o mesmo de hoje;
+* fev/2020 veio com um arquivo inconsistente (271 mil voos, 0% de atraso) e mar/2020 a dez/2021 é a pandemia.
+
+Projetar em cima da série inteira faria o modelo aprender quedas e saltos que nunca aconteceram. Por isso a projeção usa **mar/2018 em diante**, e os meses de fev/2020 a dez/2021 viram uma lacuna preenchida pelo padrão sazonal dos outros anos com o nível interpolado. Os testes (`tests/test_projecao.py`) garantem que o preenchimento só usa dados disponíveis no corte e que nenhuma previsão da validação enxerga o futuro.
+
+### Sete algoritmos, uma regra de escolha
+
+<p align="center"><img src="reports/figures/projecao_modelos.png" width="70%"></p>
+
+Ingênuo sazonal, média sazonal de 2 anos, Holt-Winters amortecido, SARIMA(1,0,0)(0,1,1)₁₂, Theta, regressão com tendência e sazonalidade e um LightGBM multi-horizonte com defasagens. Cada um prevê **24 meses à frente a partir de 7 cortes** (trimestrais, de mar/2023 a set/2024), vendo só o passado. Vence, por série, o menor erro absoluto médio. A faixa de incerteza não vem de suposições do modelo: é o **percentil 80 dos erros reais** do vencedor na validação, por bloco de 6 meses de horizonte.
+
+O SARIMA venceu as quatro séries de atraso. No volume, os modelos simples (ingênuo e Theta) foram os melhores, e o LightGBM, que brilha na previsão por voo, ficou no meio da tabela: com ~100 meses de história, flexibilidade vira variância.
+
+**Limitações:** menos de seis anos comparáveis, dois deles reconstruídos; a projeção extrapola padrões e não incorpora choques (novas companhias, falências, mudanças regulatórias, clima extremo). O viés positivo da Gol na validação (+4 p.p.) mostra que mudanças de operação de uma empresa podem não caber no padrão histórico.
+
+## 6. Limitações e próximos passos
 
 * **Sem clima.** Dados meteorológicos (METAR/INMET) por aeroporto e hora são o próximo passo natural e devem trazer o maior ganho.
 * **Sem a aeronave.** O VRA não informa a matrícula, então não dá para seguir o atraso do voo anterior do mesmo avião (o *rotation delay*, principal causa de atraso em hubs).
 * **Mudança no tempo.** O AUC na validação (0,685) e no teste (0,700) difere um pouco, porque a mistura de rotas e o nível de atraso mudam de um trimestre para outro. Em produção, o modelo deve ser re-treinado todo mês, quando a ANAC publica novos dados.
 * **Congestionamento na API.** A API recebe um voo isolado, então usa a média histórica de voos programados por aeroporto, dia da semana e hora, em vez da malha real do dia.
 
-## 6. API
+## 7. API
 
 ```bash
 uvicorn atrasos.api:app --reload      # ou: docker build -t atrasos-api . && docker run -p 8000:8000 atrasos-api
@@ -169,7 +208,7 @@ A resposta traz a probabilidade, um alerta (limiar escolhido na validação) e o
 
 A API serve o modelo de **planejamento**: ela recebe um voo isolado, então o congestionamento usa a média histórica de voos programados no aeroporto naquele dia da semana e hora.
 
-## 7. Como reproduzir
+## 8. Como reproduzir
 
 ```bash
 git clone https://github.com/YUCAVALCANTE/atrasos-voos-brasil && cd atrasos-voos-brasil
@@ -182,6 +221,8 @@ make testes       # ruff + pytest
 
 Sem `make` (Windows): rode em sequência `python -m atrasos.download`, `atrasos.limpeza`, `atrasos.preparar`, `atrasos.treino`, `atrasos.relatorio`.
 
+Projeção 2027–2028: `python -m atrasos.serie_mensal` (baixa e resume o VRA desde 2015; ~1,5 GB de download, nada fica em disco) e depois `python -m atrasos.projecao`.
+
 ## Estrutura
 
 ```
@@ -193,6 +234,8 @@ src/atrasos/
 ├── treino.py       # linhas de base, LightGBM, MLflow, empacotamento do modelo
 ├── metricas.py     # ROC/PR-AUC, Brier, precisão e lift no top 10%
 ├── relatorio.py    # figuras do README
+├── serie_mensal.py # séries mensais desde 2015 (download que resume e descarta)
+├── projecao.py     # 7 algoritmos, validação com origem móvel, projeção 2027–2028
 ├── dashboard_dados.py  # agrega os dados do dashboard interativo
 ├── predicao.py     # inferência + explicação SHAP por voo
 └── api.py          # FastAPI

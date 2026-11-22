@@ -18,6 +18,7 @@
   .vx-tile { display: flex; flex-direction: column; gap: var(--cds-gap-xs); padding: 16px; background: var(--color-panel); border: 0; border-radius: var(--cds-radius); min-width: 0; }
   .vx-tile-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-weight: 400; }
   .vx-tile-value { font-family: var(--font-anthropic-sans); font-weight: 700; letter-spacing: -0.02em; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .vx-tile-texto { font-size: var(--cds-font-size-heading); letter-spacing: 0; line-height: 1.3; }
   .vx-tile-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; align-self: flex-start; border-radius: 9999px; transition: color var(--cds-dur-slow); }
   .vx-tile.vx-pior .vx-tile-note, .vx-tile.vx-melhor .vx-tile-note { font-weight: 500; padding: 2px 10px 2px 8px; }
   .vx-tile.vx-pior .vx-tile-note { color: var(--color-bad); background: color-mix(in srgb, var(--color-bad) 12%, var(--color-panel)); }
@@ -81,6 +82,7 @@
     <div class="vx-tabs" role="tablist" aria-label="Seções">
       <button class="vx-tab" role="tab" id="aba-panorama" aria-controls="panorama" aria-selected="true" data-aba="panorama">Panorama dos atrasos</button>
       <button class="vx-tab" role="tab" id="aba-modelo" aria-controls="modelo" aria-selected="false" data-aba="modelo">Modelo de previsão</button>
+      <button class="vx-tab" role="tab" id="aba-projecao" aria-controls="projecao" aria-selected="false" data-aba="projecao">Projeção 2027–2028</button>
     </div>
     <div class="vx-filters" id="filtros">
       <select class="dash-select" id="f-empresa" aria-label="Empresa" data-draw="filtro" data-filtro="empresa" data-source="filtros"></select>
@@ -198,6 +200,58 @@
     </div>
   </section>
 
+  <section class="vx-section" id="projecao" role="tabpanel" aria-labelledby="aba-projecao" hidden>
+    <p class="vx-lede">Projeção mês a mês até dez/2028 para os voos domésticos. Sete algoritmos de séries temporais foram comparados prevendo 24 meses à frente, a partir de sete cortes entre 2023 e 2024, sempre só com dados do passado. Cada série usa o que errou menos. Os filtros acima não se aplicam a esta aba.</p>
+    <div class="vx-filters">
+      <select class="dash-select" id="f-serie" aria-label="Série projetada" data-draw="proj-serie" data-source="projecao_series"></select>
+    </div>
+    <div class="vx-tiles" id="proj-indicadores">
+      <div class="vx-tile">
+        <span class="vx-tile-label">Média mensal em 2025</span>
+        <span class="vx-tile-value" data-draw="proj-kpi" data-source="projecao_series" data-field="media_2025">—</span>
+        <span class="vx-tile-note">Último ano completo observado</span>
+      </div>
+      <div class="vx-tile">
+        <span class="vx-tile-label">Projeção para 2027</span>
+        <span class="vx-tile-value" data-draw="proj-kpi" data-source="projecao_series" data-field="central_2027">—</span>
+        <span class="vx-tile-note">Faixa de 80%: <span data-draw="proj-kpi" data-source="projecao_series" data-field="inferior_2027">—</span> a <span data-draw="proj-kpi" data-source="projecao_series" data-field="superior_2027">—</span></span>
+      </div>
+      <div class="vx-tile">
+        <span class="vx-tile-label">Projeção para 2028</span>
+        <span class="vx-tile-value" data-draw="proj-kpi" data-source="projecao_series" data-field="central_2028">—</span>
+        <span class="vx-tile-note">Faixa de 80%: <span data-draw="proj-kpi" data-source="projecao_series" data-field="inferior_2028">—</span> a <span data-draw="proj-kpi" data-source="projecao_series" data-field="superior_2028">—</span></span>
+      </div>
+      <div class="vx-tile">
+        <span class="vx-tile-label">Algoritmo escolhido</span>
+        <span class="vx-tile-value vx-tile-texto" data-draw="proj-kpi" data-source="projecao_series" data-field="modelo">—</span>
+        <span class="vx-tile-note">Ganho sobre repetir o último ano: <span data-draw="proj-kpi" data-source="projecao_series" data-field="ganho_vs_ingenuo">—</span> menos erro</span>
+      </div>
+    </div>
+    <div class="vx-grid">
+      <article class="vx-card vx-wide" id="proj-grafico">
+        <h2>Histórico e projeção</h2>
+        <p class="vx-note">Linha cheia: observado desde mar/2018. Faixa cinza: pandemia, que entra no treino preenchida pelo padrão sazonal dos outros anos. Tracejado: projeção, com a faixa de 80% calculada a partir dos erros reais do algoritmo na validação.</p>
+        <div class="vx-legend"><span style="--sw: var(--vx-c0)">Observado</span><span style="--sw: var(--vx-c1)">Projeção</span><span style="--sw: var(--vx-muted)">Pandemia</span></div>
+        <div class="vx-chart vx-tall" data-draw="proj-chart" data-source="projecao_serie"></div>
+      </article>
+      <article class="vx-card" id="proj-algoritmos">
+        <h2>Qual algoritmo errou menos</h2>
+        <p class="vx-note">Erro absoluto médio prevendo de 1 a 24 meses à frente, nos sete cortes de validação. Viés positivo: o algoritmo tendeu a prever acima do que aconteceu.</p>
+        <div class="vx-tablebox">
+          <table class="vx-table" data-source="projecao_modelos" data-row-key="chave">
+            <thead><tr><th class="vx-num" data-field="posicao">#</th><th data-field="modelo">Algoritmo</th><th class="vx-num" data-field="mae">Erro médio</th><th class="vx-num" data-field="vies">Viés</th></tr></thead>
+            <tbody data-draw="proj-modelos" data-source="projecao_modelos"></tbody>
+          </table>
+        </div>
+      </article>
+      <article class="vx-card" id="proj-metodo">
+        <h2>Por que a série começa em 2018</h2>
+        <p class="vx-note">Os microdados da ANAC mudaram de forma de registro ao longo do tempo. Até set/2015, quase todo voo aparece com atraso zero, como se o horário real fosse copiado do previsto. De out/2015 a jan/2018, a taxa registrada fica várias vezes acima da atual. A partir de fev/2018 o padrão é o mesmo de hoje, então a projeção usa só esse período.</p>
+        <p class="vx-note">Fev/2020 veio com um arquivo inconsistente e mar/2020 a dez/2021 é a pandemia: esses meses viram uma lacuna, preenchida para o treino. Com menos de seis anos comparáveis, a faixa de incerteza para 2028 é larga de propósito.</p>
+      </article>
+    </div>
+  </section>
+
   <details class="vx-notes" id="notas">
     <summary>Definições, fonte e o que ficou de fora</summary>
     <dl>
@@ -221,7 +275,7 @@
   const ptMeses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
   const vx = (window.vx = {});
-  vx.sel = () => ({ ...PADRAO, ...Object.fromEntries(Object.entries(dash.params()).filter(([, v]) => v != null && v !== '')) });
+  vx.sel = () => ({ ...PADRAO, ...Object.fromEntries(Object.entries(dash.params()).filter(([k, v]) => k in PADRAO && v != null && v !== '')) });
   vx.enc = (v) => encodeURIComponent(String(v));
   vx.where = (o) => Object.entries(o).map(([k, v]) => vx.enc(k) + '=' + vx.enc(v)).join('&');
   vx.rows = (id) => { const d = dash.data(id); return d.status === 'ok' ? d.data : null; };
@@ -311,11 +365,11 @@
   const abrir = (nome, link) => {
     document.querySelectorAll('.vx-tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.aba === nome)));
     document.querySelectorAll('.vx-section').forEach((s) => { s.hidden = s.id !== nome; });
-    document.querySelectorAll('#filtros').forEach((f) => { f.style.visibility = nome === 'modelo' ? 'hidden' : 'visible'; });
+    document.querySelectorAll('#filtros').forEach((f) => { f.style.visibility = nome === 'panorama' ? 'visible' : 'hidden'; });
     if (link) dash.setLink(nome);
   };
   document.querySelectorAll('.vx-tab').forEach((b) => b.addEventListener('click', () => abrir(b.dataset.aba, true)));
-  if (['panorama', 'modelo'].includes(location.hash.slice(1))) abrir(location.hash.slice(1), false);
+  if (['panorama', 'modelo', 'projecao'].includes(location.hash.slice(1))) abrir(location.hash.slice(1), false);
 
   document.querySelectorAll('#f-limpar').forEach((b) => b.addEventListener('click', () => dash.setParams({ ...PADRAO })));
 </script>
@@ -660,5 +714,105 @@
     row.append('rect').attr('x', left).attr('height', y.bandwidth()).attr('width', (d) => Math.max(0, x(d.participacao) - left)).attr('rx', 6).attr('fill', (d) => cor[d.grupo])
       .attr('class', anima ? 'vx-grow-x' : null).style('animation-delay', (_, i) => (anima ? i * 30 + 'ms' : null));
     row.append('text').attr('x', (d) => x(d.participacao) + 6).attr('y', y.bandwidth() / 2).attr('dy', '0.35em').text((d) => vx.fmt.pct(d.participacao));
+  });
+</script>
+
+<script>
+  // Aba de projeção
+  window.PROJ_PADRAO = 'Brasil|taxa_atraso';
+  window.projSel = () => dash.params().serie || PROJ_PADRAO;
+  window.projInfo = () => { const r = vx.rows('projecao_series'); return r && r.find((x) => x.serie === projSel()); };
+
+  dash.draw('proj-serie', (s) => {
+    const r = vx.rows('projecao_series');
+    s.replaceChildren(...(r || []).map((x) => new Option(x.rotulo, x.serie)));
+    s.value = projSel();
+    s.onchange = () => dash.setParams({ serie: s.value });
+  });
+
+  dash.draw('proj-kpi', (el) => {
+    const info = projInfo();
+    const campo = el.dataset.field;
+    if (!info || info[campo] == null) { el.textContent = '—'; el.removeAttribute('data-where'); return; }
+    el.dataset.where = vx.where({ serie: info.serie });
+    const v = info[campo];
+    if (campo === 'modelo') el.textContent = v;
+    else if (campo === 'ganho_vs_ingenuo') el.textContent = d3.format('.0%')(v);
+    else el.textContent = info.taxa ? vx.fmt.pct(v) : vx.fmt.compacto(v) + ' voos';
+  });
+
+  dash.draw('proj-chart', (el) => {
+    const r = vx.rows('projecao_serie');
+    const info = projInfo();
+    if (!r || !info) return vx.vazio(el, '');
+    vx.vazio(el, '');
+    const dados = r.filter((x) => x.serie === info.serie).map((x) => ({ ...x, data: new Date(x.mes + '-01T00:00:00Z') }));
+    const obs = dados.filter((x) => x.tipo !== 'projecao');
+    const proj = dados.filter((x) => x.tipo === 'projecao');
+    const [c0, c1] = vx.colors();
+    const muted = vx.muted();
+    const fmtY = info.taxa ? d3.format('.0%') : (v) => vx.fmt.compacto(v);
+    const { svg, w, h } = vx.svg(el, 300);
+    const semPandemia = dados.filter((d) => d.tipo !== 'pandemia');
+    const ymax = d3.max(semPandemia, (d) => Math.max(d.valor, d.superior ?? 0)) * 1.08;
+    const ymin = info.taxa ? 0 : d3.min(semPandemia, (d) => Math.min(d.valor, d.inferior ?? d.valor)) * 0.9;
+    const y = d3.scaleLinear([ymin, ymax], [h - 28, 10]).nice().clamp(true);
+    const left = vx.measure(svg, y.ticks(5).map(fmtY)) + 10;
+    const x = d3.scaleUtc(d3.extent(dados, (d) => d.data), [left, w - 8]);
+    const g = svg.append('g');
+    const pan = obs.filter((d) => d.tipo === 'pandemia');
+    if (pan.length) {
+      const a = x(pan[0].data), b = x(d3.utcMonth.offset(pan[pan.length - 1].data, 1));
+      g.append('rect').attr('x', a).attr('y', 10).attr('width', b - a).attr('height', h - 38).attr('fill', muted).attr('opacity', 0.22);
+    }
+    vx.gridY(g, y, w, left, fmtY, 5);
+    const xa = g.append('g').attr('transform', `translate(0,${h - 28})`)
+      .call(d3.axisBottom(x).ticks(d3.utcYear.every(1)).tickFormat(d3.utcFormat('%Y')).tickSizeOuter(0).tickPadding(8));
+    xa.attr('font-size', null).attr('font-family', null);
+    xa.select('.domain').attr('stroke', 'var(--cds-chart-axis)');
+    xa.selectAll('.tick line').remove();
+    const linha = d3.line().defined((d) => d.valor != null).x((d) => x(d.data)).y((d) => y(d.valor));
+    g.append('path').datum(obs.map((d) => (d.tipo === 'pandemia' ? { ...d, valor: null } : d)))
+      .attr('fill', 'none').attr('stroke', c0).attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('d', linha);
+    g.append('path').datum(pan)
+      .attr('fill', 'none').attr('stroke', muted).attr('stroke-width', 1.5).attr('stroke-dasharray', '2 3').attr('d', linha);
+    if (proj.length) {
+      const ultimo = obs[obs.length - 1];
+      g.append('path').datum(proj).attr('fill', c1).attr('opacity', 0.16)
+        .attr('d', d3.area().x((d) => x(d.data)).y0((d) => y(d.inferior)).y1((d) => y(d.superior)));
+      g.append('path').datum([ultimo, ...proj]).attr('fill', 'none').attr('stroke', c1).attr('stroke-width', 2)
+        .attr('stroke-dasharray', '5 4').attr('d', linha);
+    }
+    const tip = vx.tip(el);
+    const foco = g.append('line').attr('y1', 10).attr('y2', h - 28).attr('stroke', 'var(--cds-chart-reference)').attr('opacity', 0);
+    const bis = d3.bisector((d) => d.data).center;
+    svg.append('rect').attr('x', left).attr('y', 0).attr('width', w - left).attr('height', h).attr('fill', 'transparent')
+      .on('pointermove', (ev) => {
+        const d = dados[bis(dados, x.invert(d3.pointer(ev)[0]))];
+        if (!d) return;
+        foco.attr('x1', x(d.data)).attr('x2', x(d.data)).attr('opacity', 1);
+        const f = info.taxa ? vx.fmt.pct : (v) => vx.fmt.int(Math.round(v));
+        const linhas = d.tipo === 'projecao'
+          ? [[c1, 'Projeção', f(d.valor)], [null, 'Faixa de 80%', f(d.inferior) + ' a ' + f(d.superior)]]
+          : [[d.tipo === 'pandemia' ? muted : c0, d.tipo === 'pandemia' ? 'Observado na pandemia' : 'Observado', f(d.valor)]];
+        tip.show(ev, vx.mesLabel(d.data), linhas);
+      })
+      .on('pointerleave', () => { tip.hide(); foco.attr('opacity', 0); });
+  });
+
+  dash.draw('proj-modelos', (tb) => {
+    const r = vx.rows('projecao_modelos');
+    const info = projInfo();
+    tb.replaceChildren();
+    if (!r || !info) return;
+    const pp = (v) => (info.taxa ? d3.format('.2f')(v * 100) + ' p.p.' : vx.fmt.int(Math.round(v)) + ' voos');
+    const sinal = (v) => (v > 0 ? '+' : '') + pp(v);
+    for (const d of r.filter((x) => x.serie === info.serie).sort((a, b) => a.posicao - b.posicao)) {
+      const tr = document.createElement('tr'); tr.dataset.key = d.chave;
+      const td = (txt, num, forte) => { const c = document.createElement('td'); if (num) c.className = 'vx-num'; if (forte) c.style.fontWeight = '600'; c.textContent = txt; tr.appendChild(c); };
+      const venc = d.posicao === 1;
+      td(String(d.posicao), true, venc); td(d.modelo, false, venc); td(pp(d.mae), true, venc); td(sinal(d.vies), true);
+      tb.appendChild(tr);
+    }
   });
 </script>

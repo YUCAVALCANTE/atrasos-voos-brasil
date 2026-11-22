@@ -1,0 +1,380 @@
+[
+  {
+    "escopo": "Brasil",
+    "metrica": "taxa_atraso",
+    "modelo": "sarima",
+    "modelo_nome": "SARIMA",
+    "mae_validacao": 0.02396472514335273,
+    "mae_ingenuo": 0.034332530097096345,
+    "ranking": [
+      {
+        "modelo": "SARIMA",
+        "mae": 0.02396472514335273,
+        "vies": -0.0024349432023034723
+      },
+      {
+        "modelo": "Holt-Winters amortecido",
+        "mae": 0.02617797744964846,
+        "vies": 0.010985160318033007
+      },
+      {
+        "modelo": "Média sazonal de 2 anos",
+        "mae": 0.026206091880977094,
+        "vies": -0.0010637700755287975
+      },
+      {
+        "modelo": "Theta",
+        "mae": 0.027406220149872547,
+        "vies": 0.014264218520915098
+      },
+      {
+        "modelo": "Regressão tendência + sazonalidade",
+        "mae": 0.030711672266580316,
+        "vies": 0.009723312918805026
+      },
+      {
+        "modelo": "LightGBM com defasagens",
+        "mae": 0.030734298765423267,
+        "vies": 0.004554911458097814
+      },
+      {
+        "modelo": "Ingênuo sazonal",
+        "mae": 0.034332530097096345,
+        "vies": 0.010700996106827065
+      }
+    ],
+    "media_2025": 0.14178743852291623,
+    "projecao": {
+      "2026": {
+        "central": 0.21398204704175874,
+        "inferior": 0.17522356714955334,
+        "superior": 0.2527405269339642
+      },
+      "2027": {
+        "central": 0.15912334872274986,
+        "inferior": 0.12303715928133663,
+        "superior": 0.1952095381641631
+      },
+      "2028": {
+        "central": 0.1585052354203544,
+        "inferior": 0.10972713144059447,
+        "superior": 0.20728333940011437
+      }
+    }
+  },
+  {
+    "escopo": "Brasil",
+    "metrica": "taxa_cancelamento",
+    "modelo": "holt_winters",
+    "modelo_nome": "Holt-Winters amortecido",
+    "mae_validacao": 0.008272680717483038,
+    "mae_ingenuo": 0.009310240878431979,
+    "ranking": [
+      {
+        "modelo": "Holt-Winters amortecido",
+        "mae": 0.008272680717483038,
+        "vies": 0.005172518807783029
+      },
+      {
+        "modelo": "Média sazonal de 2 anos",
+        "mae": 0.008612458147205296,
+        "vies": 0.005121428131614914
+      },
+      {
+        "modelo": "Theta",
+        "mae": 0.008761386014297616,
+        "vies": 0.005946898634739108
+      },
+      {
+        "modelo": "SARIMA",
+        "mae": 0.008878540021480127,
+        "vies": 0.004356108847325691
+      },
+      {
+        "modelo": "LightGBM com defasagens",
+        "mae": 0.009040288795777458,
+        "vies": 0.00673252424286551
+      },
+      {
+        "modelo": "Ingênuo sazonal",
+        "mae": 0.009310240878431979,
+        "vies": 0.00607864263082242
+      },
+      {
+        "modelo": "Regressão tendência + sazonalidade",
+        "mae": 0.014202821703110068,
+        "vies": 0.013502022392974225
+      }
+    ],
+    "media_2025": 0.019822288806008403,
+    "projecao": {
+      "2026": {
+        "central": 0.027234330108214164,
+        "inferior": 0.018839030398911483,
+        "superior": 0.03562962981751685
+      },
+      "2027": {
+        "central": 0.02336293121642161,
+        "inferior": 0.01203640719748999,
+        "superior": 0.034689455235353224
+      },
+      "2028": {
+        "central": 0.023362968929488307,
+        "inferior": 0.006131547716330924,
+        "superior": 0.04066790851723855
+      }
+    }
+  },
+  {
+    "escopo": "Brasil",
+    "metrica": "voos_programados",
+    "modelo": "ingenuo_sazonal",
+    "modelo_nome": "Ingênuo sazonal",
+    "mae_validacao": 2025.154761904762,
+    "mae_ingenuo": 2025.154761904762,
+    "ranking": [
+      {
+        "modelo": "Ingênuo sazonal",
+        "mae": 2025.154761904762,
+        "vies": -388.60714285714283
+      },
+      {
+        "modelo": "Theta",
+        "mae": 2026.8978638249876,
+        "vies": -264.8684145731177
+      },
+      {
+        "modelo": "Holt-Winters amortecido",
+        "mae": 2094.914128163184,
+        "vies": 3.1397453619267166
+      },
+      {
+        "modelo": "SARIMA",
+        "mae": 2143.85945139351,
+        "vies": -845.5823752601143
+      },
+      {
+        "modelo": "LightGBM com defasagens",
+        "mae": 2199.6343077032084,
+        "vies": -590.2723970730083
+      },
+      {
+        "modelo": "Média sazonal de 2 anos",
+        "mae": 2268.8653687169317,
+        "vies": -1987.4699900793653
+      },
+      {
+        "modelo": "Regressão tendência + sazonalidade",
+        "mae": 3709.8616790674873,
+        "vies": -3698.2911736662527
+      }
+    ],
+    "media_2025": 68620.16666666667,
+    "projecao": {
+      "2026": {
+        "central": 70005.33333333333,
+        "inferior": 66143.73333333332,
+        "superior": 73866.93333333333
+      },
+      "2027": {
+        "central": 69022.08333333333,
+        "inferior": 66056.13333333333,
+        "superior": 71988.03333333334
+      },
+      "2028": {
+        "central": 69022.08333333333,
+        "inferior": 66502.83333333333,
+        "superior": 71541.33333333333
+      }
+    }
+  },
+  {
+    "escopo": "Gol",
+    "metrica": "taxa_atraso",
+    "modelo": "sarima",
+    "modelo_nome": "SARIMA",
+    "mae_validacao": 0.05410846065765562,
+    "mae_ingenuo": 0.07836323737076248,
+    "ranking": [
+      {
+        "modelo": "SARIMA",
+        "mae": 0.05410846065765562,
+        "vies": 0.041480846069456005
+      },
+      {
+        "modelo": "Holt-Winters amortecido",
+        "mae": 0.06048665187897542,
+        "vies": 0.043283773768992985
+      },
+      {
+        "modelo": "Média sazonal de 2 anos",
+        "mae": 0.06504241339999482,
+        "vies": 0.05148384057993051
+      },
+      {
+        "modelo": "LightGBM com defasagens",
+        "mae": 0.06672421037056255,
+        "vies": 0.04993648064775998
+      },
+      {
+        "modelo": "Theta",
+        "mae": 0.06821431058946119,
+        "vies": 0.05052891978005164
+      },
+      {
+        "modelo": "Ingênuo sazonal",
+        "mae": 0.07836323737076248,
+        "vies": 0.06167512271205806
+      },
+      {
+        "modelo": "Regressão tendência + sazonalidade",
+        "mae": 0.07987634767432693,
+        "vies": 0.06706558427171694
+      }
+    ],
+    "media_2025": 0.11464313349042267,
+    "projecao": {
+      "2026": {
+        "central": 0.22052788423233247,
+        "inferior": 0.14288228090986357,
+        "superior": 0.2981734875548014
+      },
+      "2027": {
+        "central": 0.1530072941168262,
+        "inferior": 0.07687072500002218,
+        "superior": 0.22914386323363015
+      },
+      "2028": {
+        "central": 0.15185937212694367,
+        "inferior": 0.049275430177564895,
+        "superior": 0.2544617466841545
+      }
+    }
+  },
+  {
+    "escopo": "LATAM",
+    "metrica": "taxa_atraso",
+    "modelo": "sarima",
+    "modelo_nome": "SARIMA",
+    "mae_validacao": 0.035491797752369304,
+    "mae_ingenuo": 0.042640518051446044,
+    "ranking": [
+      {
+        "modelo": "SARIMA",
+        "mae": 0.035491797752369304,
+        "vies": -0.023475462625634373
+      },
+      {
+        "modelo": "Média sazonal de 2 anos",
+        "mae": 0.03772736163761311,
+        "vies": -0.024646501745687527
+      },
+      {
+        "modelo": "Regressão tendência + sazonalidade",
+        "mae": 0.0405062868453053,
+        "vies": 0.006319964675043225
+      },
+      {
+        "modelo": "Ingênuo sazonal",
+        "mae": 0.042640518051446044,
+        "vies": -0.006674738839620879
+      },
+      {
+        "modelo": "Theta",
+        "mae": 0.04531856415782735,
+        "vies": 0.0054817932458069915
+      },
+      {
+        "modelo": "LightGBM com defasagens",
+        "mae": 0.04730617271164426,
+        "vies": 0.004593447630422856
+      },
+      {
+        "modelo": "Holt-Winters amortecido",
+        "mae": 0.050204423923575006,
+        "vies": -0.00021563968604004235
+      }
+    ],
+    "media_2025": 0.1613012903294615,
+    "projecao": {
+      "2026": {
+        "central": 0.2635410431077391,
+        "inferior": 0.2163421316425629,
+        "superior": 0.31073995457291526
+      },
+      "2027": {
+        "central": 0.1866023323718999,
+        "inferior": 0.13659896901287324,
+        "superior": 0.23660569573092652
+      },
+      "2028": {
+        "central": 0.1803575599909207,
+        "inferior": 0.10725105260539354,
+        "superior": 0.25346406737644783
+      }
+    }
+  },
+  {
+    "escopo": "Azul",
+    "metrica": "taxa_atraso",
+    "modelo": "sarima",
+    "modelo_nome": "SARIMA",
+    "mae_validacao": 0.02882529480492664,
+    "mae_ingenuo": 0.03488042335759624,
+    "ranking": [
+      {
+        "modelo": "SARIMA",
+        "mae": 0.02882529480492664,
+        "vies": -0.01920451967529856
+      },
+      {
+        "modelo": "Holt-Winters amortecido",
+        "mae": 0.02890768112543185,
+        "vies": -0.009291956031755975
+      },
+      {
+        "modelo": "Theta",
+        "mae": 0.03001547780268669,
+        "vies": -0.010286565976009125
+      },
+      {
+        "modelo": "Média sazonal de 2 anos",
+        "mae": 0.03434854675523867,
+        "vies": -0.026271328212101635
+      },
+      {
+        "modelo": "Ingênuo sazonal",
+        "mae": 0.03488042335759624,
+        "vies": -0.01860357731342769
+      },
+      {
+        "modelo": "LightGBM com defasagens",
+        "mae": 0.035444952506108476,
+        "vies": -0.024279124861066863
+      },
+      {
+        "modelo": "Regressão tendência + sazonalidade",
+        "mae": 0.039281736401780586,
+        "vies": -0.03351884896779227
+      }
+    ],
+    "media_2025": 0.140186976848011,
+    "projecao": {
+      "2026": {
+        "central": 0.18492262108829735,
+        "inferior": 0.14650299263722508,
+        "superior": 0.22334224953936962
+      },
+      "2027": {
+        "central": 0.14512853665091532,
+        "inferior": 0.09742566000302434,
+        "superior": 0.19283141329880635
+      },
+      "2028": {
+        "central": 0.1446231862153368,
+        "inferior": 0.09982507676749038,
+        "superior": 0.18942129566318322
+      }
+    }
+  }
+]

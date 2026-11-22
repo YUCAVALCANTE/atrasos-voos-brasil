@@ -24,8 +24,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-treino = ["mlflow>=2.12", "shap>=0.45", "matplotlib>=3.8"]
-dev = ["pytest>=8", "httpx>=0.27", "ruff>=0.4"]
+treino = ["mlflow>=2.12", "shap>=0.45", "matplotlib>=3.8", "statsmodels>=0.14"]
+dev = ["pytest>=8", "httpx>=0.27", "ruff>=0.4", "statsmodels>=0.14"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
